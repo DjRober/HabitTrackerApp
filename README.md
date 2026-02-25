@@ -1,4 +1,4 @@
-# 📝 [Nombre de la App - Ej: HabitMaster]
+# 📝 [Nombre de la App: pendiente]
 
 Bienvenido al repositorio oficial de **[Nombre de la App pendiente]**, un seguidor de hábitos inteligente diseñado para ayudar a los usuarios a construir una rutina sólida y alcanzar sus objetivos personales. Este proyecto es desarrollado por estudiantes de Ingeniería de Software.
 
