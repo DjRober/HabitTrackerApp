@@ -3,10 +3,10 @@
 Bienvenido al repositorio oficial de **[Nombre de la App pendiente]**, un seguidor de hábitos inteligente diseñado para ayudar a los usuarios a construir una rutina sólida y alcanzar sus objetivos personales. Este proyecto es desarrollado por estudiantes de Ingeniería de Software.
 
 ## 👥 Equipo de Desarrollo
-* **Edgar Torres** - [Rol pendiente]
-* **Arleth Caballero** - [Rol pendiente]
-* **Elias Ochoa** - [Rol pendiente]
-* **Roberto Perez** - [Rol pendiente]
+* **Edgar Torres** - [Rol backend]
+* **Arleth Caballero** - [Rol frontend]
+* **Elias Ochoa** - [Rol frontend]
+* **Roberto Perez** - [Rol backend]
 
 ## 🚀 Tecnologías Utilizadas
 * **Lenguaje:** Kotlin 🐘
