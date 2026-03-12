@@ -135,7 +135,7 @@
                 android:layout_marginBottom="20dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_email"
+                    android:id="@+id/edt_correo"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:inputType="textEmailAddress"
@@ -179,7 +179,7 @@
                 app:endIconTint="@color/text_secondary">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_password"
+                    android:id="@+id/edt_contraseña"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:inputType="textPassword"
