@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">HabitTrackerApp</string>
+    <string name="app_name">Habitus</string>
+    <string name="login_tagline">Construye quien quieres ser.</string>
+    <string name="login_greeting">Bienvenido de nuevo ✦</string>
+    <string name="label_email">Correo electrónico</string>
+    <string name="label_password">Contraseña</string>
+    <string name="hint_email">tu@correo.com</string>
+    <string name="hint_password">••••••••</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="btn_login">Iniciar sesión</string>
+    <string name="or_continue">o continúa con</string>
+    <string name="btn_google">Google</string>
+    <string name="no_account">¿No tienes cuenta?</string>
+    <string name="btn_signup">Regístrate</string>
 </resources>
