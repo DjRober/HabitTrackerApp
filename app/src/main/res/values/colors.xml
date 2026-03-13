@@ -21,4 +21,12 @@
     <color name="input_stroke_focused">#C8614A</color>
     <color name="input_stroke_default">#DDD7CF</color>
     <color name="ripple_neutral">#1A1E1A17</color>
+    <color name="terracota">#C8614A</color>
+    <color name="terracota_light">#EDD5CE</color>
+    <color name="verde_salvia">#7DAF8F</color>
+    <color name="background_main">#F7F4EF</color>
+    <color name="fondo_tarjeta">#FFFFFF</color>
+    <color name="fondo_input">#F9F7F4</color>
+    <color name="divisor">#E8E2DA</color>
+    <color name="borde_input_default">#DDD7CF</color>
 </resources>

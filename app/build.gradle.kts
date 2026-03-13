@@ -31,6 +31,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    // Aquí está la configuración agregada para habilitar View Binding
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {

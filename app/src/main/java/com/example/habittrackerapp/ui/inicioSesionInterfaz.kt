@@ -32,7 +32,7 @@ class inicioSesionInterfaz : AppCompatActivity() {
 
             // Validamos las credenciales (Por el momento hardcodeadas)
             if(validarCredenciales(correo, contraseña)){
-               val intent : Intent = Intent(this, MainActivity::class.java)
+                val intent : Intent = Intent(this, CategoriesActivity::class.java)
                 startActivity(intent)
             }
 
