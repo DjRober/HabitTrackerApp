@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/card_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <!-- Nombre del hábito -->
+        <TextView
+            android:id="@+id/tvHabitName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/playfair_display_bold"
+            android:textSize="18sp"
+            android:textColor="@color/text_primary"
+            tools:text="Leer las escrituras"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ivHabitIcon"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <!-- Ícono -->
+        <ImageView
+            android:id="@+id/ivHabitIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
+            android:background="@drawable/bg_day_completed"
+            android:src="@drawable/ic_leaf"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Frecuencia -->
+        <TextView
+            android:id="@+id/tvFrequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
+            android:background="@drawable/bg_frequency_chip"
+            android:fontFamily="@font/dm_sans_medium"
+            android:textSize="11sp"
+            android:textColor="@color/accent"
+            tools:text="Todos los días | 3P"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvHabitName"/>
+
+        <!-- Días de la semana -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvWeekDays"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:overScrollMode="never"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvFrequency"/>
+
+        <!-- Divisor -->
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:background="@color/divider_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rvWeekDays"/>
+
+        <!-- Racha -->
+        <TextView
+            android:id="@+id/tvStreak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/dm_sans_medium"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            tools:text="🔗 1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider"/>
+
+        <!-- Porcentaje -->
+        <TextView
+            android:id="@+id/tvPercent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/dm_sans_medium"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            tools:text="✓ 18%"
+            app:layout_constraintStart_toEndOf="@id/tvStreak"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
