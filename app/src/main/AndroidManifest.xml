@@ -30,6 +30,11 @@
             android:name=".ui.HabitsActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".ui.CategoriesActivity"
+            android:exported="false">
+        </activity>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
