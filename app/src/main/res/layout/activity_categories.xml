@@ -131,19 +131,33 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Botón Nueva Categoría -->
+    <!-- Creamos un botón para añadir una nueva categoría (convive con nav) -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnNewCategory"
         android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="24dp"
         android:text="NUEVA CATEGORÍA"
         android:fontFamily="@font/dm_sans_semibold"
         android:textSize="15sp"
         android:textColor="@color/on_accent"
         app:backgroundTint="@color/accent"
         app:cornerRadius="14dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Navegación inferior -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/card_background"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
