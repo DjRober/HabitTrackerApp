@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Tab activo: terracota -->
+    <item android:color="@color/accent" android:state_checked="true" />
+    <!-- Tab inactivo: gris cálido -->
+    <item android:color="@color/text_secondary" />
+</selector>
+    <!--Con todo esto descrito, definimos el selector de color para la nav-->
