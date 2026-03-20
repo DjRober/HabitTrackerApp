@@ -1,3 +1,28 @@
 <resources>
-    <string name="app_name">HabitTrackerApp</string>
+    <string name="app_name">Habitus</string>
+    <string name="login_tagline">Construye quien quieres ser.</string>
+    <string name="login_greeting">Bienvenido de nuevo ✦</string>
+    <string name="label_email">Correo electrónico</string>
+    <string name="label_password">Contraseña</string>
+    <string name="hint_email">correo@dominio.com</string>
+    <string name="hint_password">••••••••</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="btn_login">Iniciar sesión</string>
+    <string name="or_continue">o continúa con</string>
+    <string name="btn_google">Google</string>
+    <string name="no_account">¿No tienes cuenta?</string>
+    <string name="btn_signup">Regístrate</string>
+    <!-- Navegación inferior -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_habits">Hábitos</string>
+    <string name="nav_categories">Categorías</string>
+    <!-- Home -->
+    <string name="home_greeting_morning">Buenos días ✦</string>
+    <string name="home_greeting_afternoon">Buenas tardes ✦</string>
+    <string name="home_greeting_evening">Buenas noches ✦</string>
+    <string name="home_subtitle">Construye quien quieres ser, un día a la vez.</string>
+    <string name="home_card_title">Tu día de hoy</string>
+    <string name="home_label_active">Hábitos activos</string>
+    <string name="home_label_completed">Completados hoy</string>
+    <string name="home_label_streak">Racha actual</string>
 </resources>

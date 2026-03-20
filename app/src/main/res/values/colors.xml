@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!--  Backgrounds  -->
+    <color name="background">#F7F4EF</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="input_background">#F9F7F4</color>
+    <!--  Accent — warm terracotta  -->
+    <color name="accent">#C8614A</color>
+    <color name="accent_light">#EDD5CE</color>
+    <color name="accent_ripple">#33C8614A</color>
+    <color name="on_accent">#FFFFFF</color>
+    <!--  Decorative circles  -->
+    <color name="decor_top">#C8614A</color>
+    <color name="decor_bottom">#7DAF8F</color>
+    <!--  Text  -->
+    <color name="text_primary">#1E1A17</color>
+    <color name="text_secondary">#8C8078</color>
+    <color name="text_hint">#C2B9B0</color>
+    <!--  Borders / dividers  -->
+    <color name="divider_color">#E8E2DA</color>
+    <color name="input_stroke_focused">#C8614A</color>
+    <color name="input_stroke_default">#DDD7CF</color>
+    <color name="ripple_neutral">#1A1E1A17</color>
+    <color name="terracota">#C8614A</color>
+    <color name="terracota_light">#EDD5CE</color>
+    <color name="verde_salvia">#7DAF8F</color>
+    <color name="background_main">#F7F4EF</color>
+    <color name="fondo_tarjeta">#FFFFFF</color>
+    <color name="fondo_input">#F9F7F4</color>
+    <color name="divisor">#E8E2DA</color>
+    <color name="borde_input_default">#DDD7CF</color>
 </resources>

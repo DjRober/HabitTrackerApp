@@ -7,19 +7,46 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Habitus"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTrackerApp">
+
+        <!-- Punto de entrada 'Login' -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.InicioSesionInterfaz"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Pantalla 'Home' principal post-login -->
+        <!-- Con 'singleTop' evitamos recrear la Activity si ya está en el tope del stack -->
+        <activity
+            android:name=".ui.HomeActivity"
+            android:exported="false"
+            android:launchMode="singleTop"/>
+
+        <activity
+            android:name=".ui.HabitsActivity"
+            android:exported="false"
+            android:launchMode="singleTop"/>
+
+        <activity
+            android:name=".ui.CategoriesActivity"
+            android:exported="false"
+            android:launchMode="singleTop"/>
+
+        <!-- MainActivity se usa para la busqueda sin launcher -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"/>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
     </application>
 
 </manifest>
