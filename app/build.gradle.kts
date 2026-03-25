@@ -1,13 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
 }
-
 android {
     namespace = "com.example.habittrackerapp"
     compileSdk {
         version = release(36)
     }
-
     defaultConfig {
         applicationId = "com.example.habittrackerapp"
         minSdk = 24
@@ -17,7 +15,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -27,6 +24,7 @@ android {
             )
         }
     }
+    // Habilitamos View Binding para todas las Activities
     buildFeatures {
         viewBinding = true
     }
@@ -34,13 +32,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
-    // Aquí está la configuración agregada para habilitar View Binding
-    buildFeatures {
-        viewBinding = true
-    }
 }
-
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -50,6 +42,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 }
