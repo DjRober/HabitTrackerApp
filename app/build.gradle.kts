@@ -24,7 +24,7 @@ android {
             )
         }
     }
-    // Habilitamos View Binding para todas las Activities
+    // Habilitamos 'View Binding' para todos los layouts
     buildFeatures {
         viewBinding = true
     }
@@ -39,6 +39,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    // Agregamos las dependencias de 'Navigation Component' para el manejo de Fragments y back stack
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

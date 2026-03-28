@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Creamos el layout del fragment de categorías -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -6,8 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
-
-    <!-- Círculo decorativo superior derecho -->
+    <!-- Creamos el círculo decorativo superior derecho -->
     <View
         android:id="@+id/circleTop"
         android:layout_width="220dp"
@@ -17,9 +17,8 @@
         android:layout_marginTop="-60dp"
         android:layout_marginEnd="-60dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Círculo decorativo inferior izquierdo -->
+        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Creamos el círculo decorativo inferior izquierdo -->
     <View
         android:id="@+id/circleBottom"
         android:layout_width="160dp"
@@ -29,30 +28,28 @@
         android:layout_marginBottom="-40dp"
         android:layout_marginStart="-40dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent" />
+    <!-- Creamos el título de la pantalla -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:navigationIcon="@drawable/ic_google"
-        app:title="Categorías"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="56dp"
+        android:text="Categorías"
+        android:fontFamily="@font/playfair_display_bold"
+        android:textSize="28sp"
+        android:textColor="@color/text_primary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Scroll principal -->
+        app:layout_constraintTop_toTopOf="parent" />
+    <!-- Creamos un 'scroll' para el contenido de categorías -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="80dp"
         android:overScrollMode="never"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintBottom_toTopOf="@id/btnNewCategory"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -64,16 +61,16 @@
             android:paddingHorizontal="24dp"
             android:paddingBottom="16dp">
 
-            <!-- Categorías personalizadas -->
+            <!-- Creamos la sección de las categorías personalizadas -->
             <TextView
                 android:id="@+id/tvCustomTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Categorías personalizadas"
+                android:text="Categorías Personalizadas"
                 android:fontFamily="@font/playfair_display_bold"
                 android:textSize="18sp"
-                android:textColor="@color/text_primary"/>
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/tvCustomSubtitle"
@@ -83,7 +80,7 @@
                 android:text="0 disponibles"
                 android:fontFamily="@font/dm_sans"
                 android:textSize="13sp"
-                android:textColor="@color/text_secondary"/>
+                android:textColor="@color/text_secondary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCustomCategories"
@@ -91,17 +88,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"/>
+                android:overScrollMode="never" />
 
-            <!-- Divisor -->
+            <!-- Creamos el divisor (delimitante) -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="4dp"
-                android:background="@color/divider_color"/>
+                android:background="@color/divider_color" />
 
-            <!-- Categorías por defecto -->
+            <!-- Creamos las categorías por defecto -->
             <TextView
                 android:id="@+id/tvDefaultTitle"
                 android:layout_width="wrap_content"
@@ -110,7 +107,7 @@
                 android:text="Categorías por defecto"
                 android:fontFamily="@font/playfair_display_bold"
                 android:textSize="18sp"
-                android:textColor="@color/text_primary"/>
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/tvDefaultSubtitle"
@@ -120,7 +117,7 @@
                 android:text="Editable para usuarios premium"
                 android:fontFamily="@font/dm_sans"
                 android:textSize="13sp"
-                android:textColor="@color/text_secondary"/>
+                android:textColor="@color/text_secondary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDefaultCategories"
@@ -128,40 +125,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"/>
+                android:overScrollMode="never" />
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- Creamos un botón para añadir una nueva categoría (convive con nav) -->
+    <!-- Creamos un botón para nuevas categorías -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnNewCategory"
         android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginHorizontal="24dp"
-        android:text="NUEVA CATEGORÍA"
+        android:layout_marginBottom="16dp"
+        android:text="Nueva Categoría"
         android:fontFamily="@font/dm_sans_semibold"
         android:textSize="15sp"
         android:textColor="@color/on_accent"
         app:backgroundTint="@color/accent"
         app:cornerRadius="14dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Navegación inferior -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/card_background"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/bottom_nav_color"
-        app:itemTextColor="@color/bottom_nav_color"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTrackerApp">
 
-        <!-- Punto de entrada 'Login' -->
+        <!-- Declaramos el 'Login' (punto de entrada) -->
         <activity
             android:name=".ui.InicioSesionInterfaz"
             android:exported="true">
@@ -21,27 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Pantalla 'Home' principal post-login -->
-        <!-- Con 'singleTop' evitamos recrear la Activity si ya está en el tope del stack -->
-        <activity
-            android:name=".ui.HomeActivity"
-            android:exported="false"
-            android:launchMode="singleTop"/>
-
-        <activity
-            android:name=".ui.HabitsActivity"
-            android:exported="false"
-            android:launchMode="singleTop"/>
-
-        <activity
-            android:name=".ui.CategoriesActivity"
-            android:exported="false"
-            android:launchMode="singleTop"/>
-
-        <!-- MainActivity se usa para la busqueda sin launcher -->
+        <!-- Creamos y alojamos los tres fragments con 'BottomNav' (contenedor principal) -->
         <activity
             android:name=".MainActivity"
-            android:exported="false"/>
+            android:exported="false" />
 
         <meta-data
             android:name="preloaded_fonts"
