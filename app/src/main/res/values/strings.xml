@@ -25,4 +25,43 @@
     <string name="home_label_active">Hábitos activos</string>
     <string name="home_label_completed">Completados hoy</string>
     <string name="home_label_streak">Racha actual</string>
+    <!-- Creamos los strings para el registro -->
+    <string name="register_greeting">Crea tu cuenta ✦</string>
+    <string name="label_name">Nombre completo</string>
+    <string name="hint_name">Tu nombre</string>
+    <string name="hint_email_register">correo@dominio.com</string>
+    <string name="hint_confirm_password">••••••••</string>
+    <string name="label_confirm_password">Confirmar contraseña</string>
+    <string name="btn_register">Crear cuenta</string>
+    <string name="already_account">¿Ya tienes cuenta?</string>
+    <string name="btn_login_link">Inicia sesión</string>
+    <!-- Creamos los strings para errores de validación -->
+    <string name="error_empty_field">Este campo es obligatorio</string>
+    <string name="error_invalid_email">Ingresa un correo válido</string>
+    <string name="error_password_short">Mínimo 6 caracteres</string>
+    <string name="error_passwords_dont_match">Las contraseñas no coinciden</string>
+    <string name="error_invalid_credentials">Correo o contraseña incorrectos</string>
+    <!-- Creamos los strings para los estados del botón -->
+    <string name="btn_loading">Verificando…</string>
+    <string name="btn_register_loading">Creando cuenta…</string>
+    <!-- Creamos los strings para la recuperación de contraseña -->
+    <string name="forgot_title">Recuperar acceso ✦</string>
+    <string name="forgot_subtitle">Ingresa tu correo y te enviaremos las instrucciones para restablecer tu contraseña.</string>
+    <string name="btn_send_link">Enviar instrucciones</string>
+    <string name="btn_send_loading">Enviando…</string>
+    <string name="forgot_success_title">Revisa tu bandeja de entrada</string>
+    <string name="forgot_success_message">Si el correo está registrado, recibirás un enlace en los próximos minutos.</string>
+    <string name="btn_back_login">Volver al inicio de sesión</string>
+    <!-- Creamos los strings para crear hábito -->
+    <string name="create_habit_title">Nuevo hábito ✦</string>
+    <string name="label_habit_name">Nombre del hábito</string>
+    <string name="hint_habit_name">Ej. Meditar, Leer, Ejercitar…</string>
+    <string name="label_frequency">Frecuencia</string>
+    <string name="frequency_daily">Todos los días</string>
+    <string name="frequency_custom">Días específicos</string>
+    <string name="label_days">Días de la semana</string>
+    <string name="btn_save_habit">Guardar hábito</string>
+    <string name="error_habit_name_empty">El nombre del hábito es obligatorio</string>
+    <string name="error_no_days_selected">Selecciona al menos un día</string>
+    <string name="btn_save_loading">Guardando…</string>
 </resources>
