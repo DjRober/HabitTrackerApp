@@ -1,5 +1,6 @@
 package com.example.habittrackerapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,9 +35,9 @@ class HabitsFragment : Fragment() {
         }
         binding.rvHabits.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHabits.adapter = adapter
-        // El 'FAB' queda preparado para su implementación futura
+        // El FAB abre la pantalla de crear nuevo hábito
         binding.fab.setOnClickListener {
-            // Nota: crear nuevo hábito — pendiente de implementar
+            startActivity(Intent(requireContext(), CreateHabitActivity::class.java))
         }
     }
     // Generamos los últimos siete días de forma dinámica (posible implementacion con Firebase)
