@@ -64,4 +64,40 @@
     <string name="error_habit_name_empty">El nombre del hábito es obligatorio</string>
     <string name="error_no_days_selected">Selecciona al menos un día</string>
     <string name="btn_save_loading">Guardando…</string>
+    <!-- Creamos la navegación para perfil - 4 tablero -->
+    <string name="nav_profile">Perfil</string>
+    <!-- Creamos el string para el perfil -->
+    <string name="profile_title">Mi perfil</string>
+    <string name="profile_name_placeholder">Usuario Habitus</string>
+    <string name="profile_email_placeholder">admin@habitus.com</string>
+    <string name="profile_section_stats">Estadísticas generales</string>
+    <string name="profile_stat_habits">Hábitos activos</string>
+    <string name="profile_stat_streak">Racha máxima</string>
+    <string name="profile_stat_completed">Completados total</string>
+    <string name="profile_section_settings">Configuración</string>
+    <string name="profile_option_notifications">Notificaciones</string>
+    <string name="profile_option_theme">Apariencia</string>
+    <string name="profile_option_privacy">Privacidad</string>
+    <string name="profile_option_about">Acerca de Habitus</string>
+    <string name="profile_btn_logout">Cerrar sesión</string>
+    <!-- Creamos strings para detalle de hábito -->
+    <string name="detail_label_frequency">Frecuencia</string>
+    <string name="detail_label_streak">Racha actual</string>
+    <string name="detail_label_completion">Cumplimiento</string>
+    <string name="detail_label_week">Últimos 7 días</string>
+    <string name="detail_days_unit">días</string>
+    <string name="detail_btn_complete">Marcar como completado hoy</string>
+    <string name="detail_btn_completed">Completado hoy ✓</string>
+    <!-- Creamos strings para el splash -->
+    <string name="splash_tagline">Construye quien quieres ser.</string>
+    <!-- Creamos strings para el 'onboarding' -->
+    <string name="onboarding_skip">Omitir</string>
+    <string name="onboarding_next">Siguiente</string>
+    <string name="onboarding_start">Comenzar</string>
+    <string name="onboarding_title_1">Bienvenido a Habitus</string>
+    <string name="onboarding_body_1">Construye hábitos que transformen tu vida, un día a la vez.</string>
+    <string name="onboarding_title_2">Registra tus hábitos</string>
+    <string name="onboarding_body_2">Crea hábitos personalizados, define tu frecuencia y lleva el control de tu progreso diario.</string>
+    <string name="onboarding_title_3">Mantén tu racha</string>
+    <string name="onboarding_body_3">Cada día que cumples suma. Visualiza tu avance y celebra cada logro en el camino.</string>
 </resources>

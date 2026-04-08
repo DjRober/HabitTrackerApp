@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Llamamos a los ítems de la navegación inferior -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_nav_home"
-        android:title="@string/nav_home" />
+        android:title="@string/nav_home"/>
+
     <item
         android:id="@+id/nav_habits"
         android:icon="@drawable/ic_nav_habits"
-        android:title="@string/nav_habits" />
+        android:title="@string/nav_habits"/>
+
     <item
         android:id="@+id/nav_categories"
         android:icon="@drawable/ic_nav_categories"
-        android:title="@string/nav_categories" />
+        android:title="@string/nav_categories"/>
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_nav_profile"
+        android:title="@string/nav_profile"/>
 
 </menu>
-<!-- Con todo esto descrito, definimos los ítems de navegación -->

@@ -1,0 +1,11 @@
+<!-- Creamos la ilustración de racha para onboarding página 3 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#C8614A"
+        android:pathData="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22l1,-2.3
+        A4.49,4.49 0,0 0,8 20C19,20 22,3 22,3 16,6 12.77,7 8.28,7.45"/>
+</vector>
