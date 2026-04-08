@@ -11,34 +11,55 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTrackerApp">
-        <!-- Creamos la pantalla de registro de nuevo usuario -->
+
+        <!-- Creamos el 'splash' y lo declaramos como punto de entrada -->
         <activity
-            android:name=".ui.RegisterActivity"
-            android:exported="false" />
-        <!-- Creamos la pantalla de recuperación de contraseña -->
-        <activity
-            android:name=".ui.ForgotPasswordActivity"
-            android:exported="false" />
-        <!-- Declaramos el 'Login' (punto de entrada) -->
-        <activity
-            android:name=".ui.InicioSesionInterfaz"
+            android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Pantalla para crear un nuevo hábito -->
+
+        <!-- Creamos el 'Onboarding', se muestra solo la primera vez -->
         <activity
-            android:name=".ui.CreateHabitActivity"
-            android:exported="false" />
-        <!-- Creamos y alojamos los tres fragments con 'BottomNav' (contenedor principal) -->
+            android:name=".ui.OnboardingActivity"
+            android:exported="false"/>
+
+        <!-- Creamos la pantalla de 'Login', autenticación de usuarios existentes -->
+        <activity
+            android:name=".ui.InicioSesionInterfaz"
+            android:exported="false"/>
+
+        <!-- Creamos la pantalla de 'Registro', creación de cuenta nueva -->
+        <activity
+            android:name=".ui.RegisterActivity"
+            android:exported="false"/>
+
+        <!-- Creamos la pantalla de 'Recuperación de contraseña' -->
+        <activity
+            android:name=".ui.ForgotPasswordActivity"
+            android:exported="false"/>
+
+        <!-- Creamos la pantalla que aloja los cuatro fragments con 'BottomNav' -->
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="false"/>
+
+        <!-- Creamos la pantalla de 'Crear nuevo hábito' -->
+        <activity
+            android:name=".ui.CreateHabitActivity"
+            android:exported="false"/>
+
+        <!-- Creamos la pantalla de 'Detalle de un hábito' existente -->
+        <activity
+            android:name=".ui.HabitDetailActivity"
+            android:exported="false"/>
+
         <meta-data
             android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
+            android:resource="@array/preloaded_fonts"/>
 
     </application>
 
