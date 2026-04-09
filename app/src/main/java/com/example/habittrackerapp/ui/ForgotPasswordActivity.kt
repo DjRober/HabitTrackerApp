@@ -1,39 +1,41 @@
 package com.example.habittrackerapp.ui
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Patterns
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.habittrackerapp.R
+import com.example.habittrackerapp.data.FirebaseAuthRepository
 import com.example.habittrackerapp.databinding.ActivityForgotPasswordBinding
+import kotlinx.coroutines.launch
 
 class ForgotPasswordActivity : AppCompatActivity() {
 
-    // Creamos el 'binding' (privado)
+    // Creamos el binding para el layout
     private lateinit var binding: ActivityForgotPasswordBinding
-
+    // Declaramos el repositorio de autenticación
+    private val authRepository = FirebaseAuthRepository()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityForgotPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // Creamos el evento 'onClick' del botón principal
+        // Declaramos evento 'onClick' del botón de envío
         binding.btnSend.setOnClickListener {
             if (validarCampo()) {
                 ejecutarEnvio()
             }
         }
-        // Creamos el evento para  regresar al login
+        // Declaramos evento 'onClick' del enlace de login, regresamos al login
         binding.tvBackLogin.setOnClickListener {
             finish()
         }
-        // Limpiamos los errores conforme el usuario escribe
+        // Limpiamos error mientras el usuario escribe
         binding.edtCorreo.setOnFocusChangeListener { _, _ ->
             binding.tilEmail.error = null
         }
     }
-    // Validamos que el correo contenga un formato válido
+    // Validamos que el correo tenga formato válido
     private fun validarCampo(): Boolean {
         val correo = binding.edtCorreo.text.toString().trim()
 
@@ -48,27 +50,35 @@ class ForgotPasswordActivity : AppCompatActivity() {
             true
         }
     }
-    // Simulamos el envío del correo de recuperación
+    // Llamamos a 'Firebase Auth' para enviar el correo de restablecimiento
     private fun ejecutarEnvio() {
+        val correo = binding.edtCorreo.text.toString().trim()
         // Mostramos estado de carga
         binding.btnSend.isEnabled = false
         binding.btnSend.text      = getString(R.string.btn_send_loading)
 
-        // Simulamos el proceso de 1.5 segundos (se reemplaza con Firebase Auth)
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Nota: aquí irá Firebase Auth sendPasswordResetEmail()
-            mostrarConfirmacion()
-        }, 1300)
+        lifecycleScope.launch {
+            val resultado = authRepository.enviarCorreoRestablecimiento(correo)
+
+            resultado.fold(
+                onSuccess = {
+                    mostrarConfirmacion()  // Revelamos información de éxito
+                },
+                onFailure = {
+                    // Restauramos el botón en caso de error de red
+                    binding.btnSend.isEnabled = true
+                    binding.btnSend.text      = getString(R.string.btn_send_link)
+                    binding.tilEmail.error    = getString(R.string.error_invalid_email)
+                }
+            )
+        }
     }
     // Ocultamos el formulario y mostramos el mensaje de confirmación
     private fun mostrarConfirmacion() {
-        // Ocultamos los elementos del formulario
-        binding.tilEmail.visibility  = View.GONE
-        binding.btnSend.visibility   = View.GONE
-        // Actualizamos el título y subtítulo con el mensaje de éxito
-        binding.tvTitle.text    = getString(R.string.forgot_success_title)
-        binding.tvSubtitle.text = getString(R.string.forgot_success_message)
-        // Mostramos el link de regreso al login
+        binding.tilEmail.visibility = View.GONE
+        binding.btnSend.visibility  = View.GONE
+        binding.tvTitle.text        = getString(R.string.forgot_success_title)
+        binding.tvSubtitle.text     = getString(R.string.forgot_success_message)
         binding.tvBackLogin.visibility = View.VISIBLE
     }
 }
