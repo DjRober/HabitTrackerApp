@@ -100,4 +100,34 @@
     <string name="onboarding_body_2">Crea hábitos personalizados, define tu frecuencia y lleva el control de tu progreso diario.</string>
     <string name="onboarding_title_3">Mantén tu racha</string>
     <string name="onboarding_body_3">Cada día que cumples suma. Visualiza tu avance y celebra cada logro en el camino.</string>
+    <!-- Creamos los strings para eliminar hábito -->
+    <string name="habit_deleted">Hábito eliminado</string>
+    <string name="habit_undo">Deshacer</string>
+    <!-- Creamos los strings de la sección de 'Notificaciones' (perfil) -->
+    <string name="notif_title">Notificaciones</string>
+    <string name="notif_enable">Activar recordatorios</string>
+    <string name="notif_enable_desc">Recibe un recordatorio diario para registrar tus hábitos.</string>
+    <string name="notif_time">Hora del recordatorio</string>
+    <string name="notif_time_desc">Se te notificará a esta hora todos los días.</string>
+    <string name="notif_morning">Mañana (8:00 AM)</string>
+    <string name="notif_afternoon">Tarde (2:00 PM)</string>
+    <string name="notif_evening">Noche (8:00 PM)</string>
+    <string name="notif_footer">Las notificaciones te ayudan a mantener la consistencia. Puedes cambiar esta configuración en cualquier momento.</string>
+    <!-- Creamos los strings para sección de 'Apariencia' (perfil) -->
+    <string name="appearance_title">Apariencia</string>
+    <string name="appearance_theme">Tema de la aplicación</string>
+    <string name="appearance_light">Claro</string>
+    <string name="appearance_dark">Oscuro</string>
+    <string name="appearance_system">Seguir sistema</string>
+    <string name="appearance_footer">El tema seleccionado se aplicará en toda la aplicación y se recordará entre sesiones.</string>
+    <!-- Creamos lo strings de la sección 'Privacidad' (perfil) -->
+    <string name="privacy_title">Privacidad</string>
+    <string name="privacy_last_update">Última actualización: abril 2026</string>
+    <!-- Creamos los strings para la sección 'Acerca de' (perfil) -->
+    <string name="about_title">Acerca de Habitus</string>
+    <string name="about_version">Versión 1.0</string>
+    <string name="about_description">Habitus es una aplicación de seguimiento de hábitos diseñada para ayudarte a construir una rutina sólida y alcanzar tus objetivos personales.</string>
+    <string name="about_team_title">Equipo de desarrollo</string>
+    <string name="about_tech_title">Tecnologías</string>
+    <string name="about_footer">Desarrollado como proyecto universitario en la UTCJ — Licenciatura en Ingeniería en Tecnologías de la Información e Innovación Digital.</string>
 </resources>

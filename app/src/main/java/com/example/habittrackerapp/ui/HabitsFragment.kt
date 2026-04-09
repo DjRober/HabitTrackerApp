@@ -7,16 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.habittrackerapp.R
 import com.example.habittrackerapp.data.DayState
 import com.example.habittrackerapp.data.DayStatus
 import com.example.habittrackerapp.data.Habit
 import com.example.habittrackerapp.data.HabitRepository
 import com.example.habittrackerapp.databinding.FragmentHabitsBinding
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class HabitsFragment : Fragment() {
+
     // Creamos el binding, se anula en 'onDestroyView' para evitar memory leaks
     private var _binding: FragmentHabitsBinding? = null
     private val binding get() = _binding!!
@@ -35,17 +39,16 @@ class HabitsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Configuramos el 'RecyclerView' vacío inicialmente
         binding.rvHabits.layoutManager = LinearLayoutManager(requireContext())
-        // El 'FAB' abre la pantalla de crear hábito
-        binding.fab.setOnClickListener {
+        binding.fab.setOnClickListener {    // El 'FAB' abre la pantalla de crear hábito
             startActivity(Intent(requireContext(), CreateHabitActivity::class.java))
         }
         cargarHabitos()    // Cargamos los hábitos desde Firestore
     }
-    override fun onResume() {   // Actualizamos, por si Usuario crea nuevo hábito
+    override fun onResume() { // Actualizamos, por si Usuario crea nuevo hábito
         super.onResume()
         cargarHabitos()
     }
-    // Cargamos los hábitos del usuario desde Firestore
+    // Cargamos los hábitos de Usuario desde Firestore
     private fun cargarHabitos() {
         mostrarCarga(true)
 
@@ -65,8 +68,7 @@ class HabitsFragment : Fragment() {
                             habit.copy(weekDays = getLast7Days())
                         }
                         val adapter = HabitAdapter(habitsConDias) { habit ->
-                            // Al tocar un hábito abrimos su detalle
-                            val intent = Intent(
+                            val intent = Intent(    // Al tocar un hábito abrimos su detalle
                                 requireContext(),
                                 HabitDetailActivity::class.java
                             ).apply {
@@ -79,6 +81,9 @@ class HabitsFragment : Fragment() {
                             startActivity(intent)
                         }
                         binding.rvHabits.adapter = adapter
+
+                        // Activamos el swipe para eliminar con la lista y adaptador actuales
+                        configurarSwipeEliminar(adapter, habitsConDias)
                     }
                 },
                 onFailure = {
@@ -87,6 +92,49 @@ class HabitsFragment : Fragment() {
                 }
             )
         }
+    }
+    // Configuramos el gesto de swipe para eliminar hábitos
+    private fun configurarSwipeEliminar(adapter: HabitAdapter, habitos: List<Habit>) {
+        val itemTouchHelper = ItemTouchHelper(
+            object : ItemTouchHelper.SimpleCallback(
+                0, // No soportamos drag & drop
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT // Swipe en ambas direcciones
+            ) {
+                override fun onMove(
+                    recyclerView: androidx.recyclerview.widget.RecyclerView,
+                    viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                    target: androidx.recyclerview.widget.RecyclerView.ViewHolder
+                ) = false // No usamos drag & drop
+                override fun onSwiped(
+                    viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                    direction: Int
+                ) {
+                    val posicion    = viewHolder.adapterPosition
+                    val habitoId    = habitos[posicion].id
+                    // Eliminamos el hábito de Firestore
+                    lifecycleScope.launch {
+                        val resultado = habitRepository.eliminarHabito(habitoId)
+
+                        resultado.fold(
+                            onSuccess = {
+                                cargarHabitos()    // Recargamos la lista actualizada desde la nube
+                                Snackbar.make(     // Mostramos 'Snackbar' informando al usuario
+                                    binding.root,
+                                    getString(R.string.habit_deleted),
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                            },
+                            onFailure = {
+                                // Si falla por problemas de red, restauramos el item visualmente
+                                adapter.notifyItemChanged(posicion)
+                            }
+                        )
+                    }
+                }
+            }
+        )
+        // Vinculamos este comportamiento a nuestro RecyclerView
+        itemTouchHelper.attachToRecyclerView(binding.rvHabits)
     }
     // Mostramos u ocultamos el indicador de carga
     private fun mostrarCarga(mostrar: Boolean) {

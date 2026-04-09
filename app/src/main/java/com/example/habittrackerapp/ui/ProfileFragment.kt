@@ -63,11 +63,19 @@ class ProfileFragment : Fragment() {
                 }
             )
         }
-        // Opciones de configuración, pendientes de implementar
-        binding.optionNotifications.setOnClickListener { }
-        binding.optionTheme.setOnClickListener         { }
-        binding.optionPrivacy.setOnClickListener       { }
-        binding.optionAbout.setOnClickListener         { }
+        // Conectamos cada opción de configuración a su pantalla correspondiente
+        binding.optionNotifications.setOnClickListener {
+            startActivity(Intent(requireContext(), NotificationsActivity::class.java))
+        }
+        binding.optionTheme.setOnClickListener {
+            startActivity(Intent(requireContext(), AppearanceActivity::class.java))
+        }
+        binding.optionPrivacy.setOnClickListener {
+            startActivity(Intent(requireContext(), PrivacyActivity::class.java))
+        }
+        binding.optionAbout.setOnClickListener {
+            startActivity(Intent(requireContext(), AboutActivity::class.java))
+        }
         // Cerrar sesión real con Firebase Auth
         binding.btnLogout.setOnClickListener {
             val authRepo = FirebaseAuthRepository()
