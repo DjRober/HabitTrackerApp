@@ -1,33 +1,37 @@
 package com.example.habittrackerapp.ui
 
+import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.habittrackerapp.MainActivity
 import com.example.habittrackerapp.R
+import com.example.habittrackerapp.data.FirebaseAuthRepository
 import com.example.habittrackerapp.databinding.ActivityRegisterBinding
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
-    // Creamos el binding (privado)
+    // Creamos el binding para el layout
     private lateinit var binding: ActivityRegisterBinding
-
+    // Declaramos el repositorio de autenticación
+    private val authRepository = FirebaseAuthRepository()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // Definimos el evento 'onClick' del botón principal
+        // Declaramos evento 'onClick' del botón de registro
         binding.btnRegister.setOnClickListener {
             if (validarCampos()) {
                 ejecutarRegistro()
             }
         }
-        // Regresamos al login usando la misma instancia (no creamos una nueva)
+        //Declaramos evento 'onClick' del enlace de login, regresamos al login
         binding.tvLoginLink.setOnClickListener {
             finish()
         }
-        // Limpiamos los errores que el usuario crea al escribir
+        // Limpiamos errores mientras el usuario escribe
         binding.edtName.setOnFocusChangeListener { _, _ ->
             binding.tilName.error = null
         }
@@ -43,19 +47,19 @@ class RegisterActivity : AppCompatActivity() {
     }
     // Validamos todos los campos del formulario
     private fun validarCampos(): Boolean {
-        val nombre          = binding.edtName.text.toString().trim()
-        val correo          = binding.edtCorreo.text.toString().trim()
-        val contraseña      = binding.edtPassword.text.toString()
-        val confirmar       = binding.edtConfirmPassword.text.toString()
-        var esValido        = true
-        // Nombre no vacío (validación)
+        val nombre     = binding.edtName.text.toString().trim()
+        val correo     = binding.edtCorreo.text.toString().trim()
+        val contraseña = binding.edtPassword.text.toString()
+        val confirmar  = binding.edtConfirmPassword.text.toString()
+        var esValido   = true
+
         if (nombre.isEmpty()) {
             binding.tilName.error = getString(R.string.error_empty_field)
             esValido = false
         } else {
             binding.tilName.error = null
         }
-        // Correo con formato válido (validación)
+
         if (correo.isEmpty()) {
             binding.tilEmail.error = getString(R.string.error_empty_field)
             esValido = false
@@ -65,7 +69,7 @@ class RegisterActivity : AppCompatActivity() {
         } else {
             binding.tilEmail.error = null
         }
-        // Contraseña mínimo 6 caracteres (validación)
+
         if (contraseña.isEmpty()) {
             binding.tilPassword.error = getString(R.string.error_empty_field)
             esValido = false
@@ -75,7 +79,7 @@ class RegisterActivity : AppCompatActivity() {
         } else {
             binding.tilPassword.error = null
         }
-        // Las contraseñas coinciden (validación)
+
         if (confirmar.isEmpty()) {
             binding.tilConfirmPassword.error = getString(R.string.error_empty_field)
             esValido = false
@@ -88,16 +92,33 @@ class RegisterActivity : AppCompatActivity() {
 
         return esValido
     }
-    // Simulamos el estado de carga del registro (se reemplaza con Firebase Auth)
+    // Llamamos a 'Firebase Auth' para crear la cuenta
     private fun ejecutarRegistro() {
+        val nombre     = binding.edtName.text.toString().trim()
+        val correo     = binding.edtCorreo.text.toString().trim()
+        val contraseña = binding.edtPassword.text.toString()
+        // Mostramos estado de carga
         binding.btnRegister.isEnabled = false
         binding.btnRegister.text      = getString(R.string.btn_register_loading)
 
-        // Simulamos creación de cuenta (1.5 segundos)
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Nota: aquí irá Firebase Auth createUserWithEmailAndPassword()
-            // Por ahora regresamos al login con la cuenta "creada"
-            finish()
-        }, 1300)
+        lifecycleScope.launch {
+            val resultado = authRepository.registrarUsuario(nombre, correo, contraseña)
+
+            resultado.fold(
+                onSuccess = {
+                    // Si el registro es exitoso, navegamos a 'Home' directamente
+                    val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                },
+                onFailure = {
+                    // Si se produce un error, restauramos el botón y mostramos el mensaje
+                    binding.btnRegister.isEnabled = true
+                    binding.btnRegister.text      = getString(R.string.btn_register)
+                    binding.tilEmail.error        = it.message
+                }
+            )
+        }
     }
 }

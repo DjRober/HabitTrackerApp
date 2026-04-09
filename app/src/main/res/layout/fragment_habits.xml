@@ -56,6 +56,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_habit" />
+    <!-- Creamos un 'estado vacío', se muestra cuando no hay hábitos -->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Aún no tienes hábitos.\nToca el botón + para crear el primero."
+        android:fontFamily="@font/dm_sans"
+        android:textSize="15sp"
+        android:lineSpacingExtra="4dp"
+        android:textColor="@color/text_secondary"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginHorizontal="48dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
     <!-- Creamos 'FAB' para agregar nuevo hábito -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

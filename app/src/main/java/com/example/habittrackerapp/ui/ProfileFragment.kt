@@ -1,6 +1,10 @@
 package com.example.habittrackerapp.ui
 
+import androidx.lifecycle.lifecycleScope
+import com.example.habittrackerapp.data.HabitRepository
+import kotlinx.coroutines.launch
 import android.content.Intent
+import com.example.habittrackerapp.data.FirebaseAuthRepository
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,17 +29,50 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Configuramos la inicial del avatar con la primera letra del nombre
-        // Nota: cuando llegue Firebase esto se reemplaza con el nombre real del usuario
-        val nombre = binding.tvUserName.text.toString()
-        binding.tvAvatar.text = nombre.firstOrNull()?.uppercase() ?: "U"
-        // Opciones de configuración — pendientes de implementar
-        binding.optionNotifications.setOnClickListener { /* Nota: pendiente */ }
-        binding.optionTheme.setOnClickListener         { /* Nota: pendiente */ }
-        binding.optionPrivacy.setOnClickListener       { /* Nota: pendiente */ }
-        binding.optionAbout.setOnClickListener         { /* Nota: pendiente */ }
-        // Si cerramos sesión regresamos al login y limpiamos el back stack
+        // Cargamos los datos reales del usuario desde Firebase Auth
+        val authRepository = FirebaseAuthRepository()
+        val usuario        = authRepository.obtenerUsuarioActual()
+
+        if (usuario != null) {
+            binding.tvUserEmail.text = usuario.email ?: ""    // Mostramos el email real del usuario
+            // Buscamos el nombre en Firestore
+            val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            firestore.collection("usuarios")
+                .document(usuario.uid)
+                .get()
+                .addOnSuccessListener { doc ->
+                    val nombre = doc.getString("nombre") ?: "Usuario"
+                    binding.tvUserName.text = nombre
+                    binding.tvAvatar.text   = nombre.firstOrNull()?.uppercase() ?: "U"
+                }
+        }
+        // Cargamos las estadísticas reales del usuario
+        val habitRepo = HabitRepository()
+        lifecycleScope.launch {
+            val resultado = habitRepo.obtenerEstadisticas()
+            resultado.fold(
+                onSuccess = { (totalHabitos, completadosHoy, rachaMaxima) ->
+                    binding.tvStatHabits.text    = totalHabitos.toString()
+                    binding.tvStatStreak.text    = rachaMaxima.toString()
+                    binding.tvStatCompleted.text = completadosHoy.toString()
+                },
+                onFailure = {
+                    binding.tvStatHabits.text    = "0"
+                    binding.tvStatStreak.text    = "0"
+                    binding.tvStatCompleted.text = "0"
+                }
+            )
+        }
+        // Opciones de configuración, pendientes de implementar
+        binding.optionNotifications.setOnClickListener { }
+        binding.optionTheme.setOnClickListener         { }
+        binding.optionPrivacy.setOnClickListener       { }
+        binding.optionAbout.setOnClickListener         { }
+        // Cerrar sesión real con Firebase Auth
         binding.btnLogout.setOnClickListener {
+            val authRepo = FirebaseAuthRepository()
+            authRepo.cerrarSesion()
+
             val intent = Intent(requireContext(), InicioSesionInterfaz::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_CLEAR_TASK

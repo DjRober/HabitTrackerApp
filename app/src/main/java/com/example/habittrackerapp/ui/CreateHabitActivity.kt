@@ -1,5 +1,8 @@
 package com.example.habittrackerapp.ui
 
+import androidx.lifecycle.lifecycleScope
+import com.example.habittrackerapp.data.HabitRepository
+import kotlinx.coroutines.launch
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
@@ -11,11 +14,9 @@ import com.example.habittrackerapp.R
 import com.example.habittrackerapp.databinding.ActivityCreateHabitBinding
 
 class CreateHabitActivity : AppCompatActivity() {
-
-    // Creamos el binding (privado)
-    private lateinit var binding: ActivityCreateHabitBinding
+    private lateinit var binding: ActivityCreateHabitBinding    // Creamos el binding
+    private val habitRepository = HabitRepository()    // Declaramos el repositorio de hábitos
     private var esDiario = true    // 'esDiario' controla el modo de frecuencia seleccionado
-
     // Mapa de chip -> estado seleccionado (false = no seleccionado)
     private val diasSeleccionados = mutableMapOf<TextView, Boolean>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,13 +121,62 @@ class CreateHabitActivity : AppCompatActivity() {
         }
         return esValido
     }
-    // Simulamos el guardado del hábito (se reemplaza con Firebase Firestore)
+    // Declaramos 'guardarHabito' para guardar el hábito en Firestore
     private fun guardarHabito() {
+        val nombre     = binding.edtHabitName.text.toString().trim()
+        val frecuencia = if (esDiario) {
+            getString(R.string.frequency_daily)
+        } else {
+            // Construimos el string de días seleccionados
+            val etiquetas = mapOf(
+                binding.chipLun to "Lun",
+                binding.chipMar to "Mar",
+                binding.chipMie to "Mié",
+                binding.chipJue to "Jue",
+                binding.chipVie to "Vie",
+                binding.chipSab to "Sáb",
+                binding.chipDom to "Dom"
+            )
+            diasSeleccionados
+                .filter { it.value }
+                .keys
+                .mapNotNull { etiquetas[it] }
+                .joinToString(" - ")
+        }
+
+        val diasLista = if (esDiario) {
+            listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
+        } else {
+            val etiquetas = mapOf(
+                binding.chipLun to "Lun",
+                binding.chipMar to "Mar",
+                binding.chipMie to "Mié",
+                binding.chipJue to "Jue",
+                binding.chipVie to "Vie",
+                binding.chipSab to "Sáb",
+                binding.chipDom to "Dom"
+            )
+            diasSeleccionados
+                .filter { it.value }
+                .keys
+                .mapNotNull { etiquetas[it] }
+        }
+
         binding.btnSave.isEnabled = false
         binding.btnSave.text      = getString(R.string.btn_save_loading)
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Nota: aquí irá la llamada al repositorio con Firestore
-            finish()
-        }, 1000)
+
+        lifecycleScope.launch {
+            val resultado = habitRepository.guardarHabito(nombre, frecuencia, diasLista)
+
+            resultado.fold(
+                onSuccess = {
+                    finish()    // Hábito guardado exitosamente
+                },
+                onFailure = {    // Error al guardar hábito, restauramos botón
+                    binding.btnSave.isEnabled = true
+                    binding.btnSave.text      = getString(R.string.btn_save_habit)
+                }
+            )
+        }
     }
 }
