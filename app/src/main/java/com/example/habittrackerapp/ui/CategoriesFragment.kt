@@ -1,20 +1,22 @@
 package com.example.habittrackerapp.ui
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.habittrackerapp.R
+import com.example.habittrackerapp.data.CategoryRepository
 import com.example.habittrackerapp.databinding.FragmentCategoriesBinding
+import kotlinx.coroutines.launch
 
 class CategoriesFragment : Fragment() {
-
-    // Declaramos el binding (privado), se anula en 'onDestroyView' para evitar memory leaks
     private var _binding: FragmentCategoriesBinding? = null
     private val binding get() = _binding!!
+    // Declaramos el repositorio de categorías
+    private val categoryRepository = CategoryRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,40 +26,59 @@ class CategoriesFragment : Fragment() {
         _binding = FragmentCategoriesBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Mandamos a llamar para crear las nuevas categorías
-        setupCustomCategories()
-        setupDefaultCategories()
-        // Dejamos preparado el botón para su implementación futura
-        binding.btnNewCategory.setOnClickListener {
-            // Nota: nueva categoría — pendiente de implementar
+        // Cargamos las categorías desde Firestore
+        cargarCategorias()
+        binding.btnNewCategory.setOnClickListener {    // El botón abre la pantalla de crear categoría
+            startActivity(Intent(requireContext(), CreateCategoryActivity::class.java))
         }
     }
-    // Declaramos las categorías personalizadas (privada)
-    private fun setupCustomCategories() {
-        val customCategories = listOf(
-            Category("Espiritual", R.drawable.ic_leaf, 2, Color.parseColor("#C8614A"))
-        )
-        binding.tvCustomSubtitle.text = "${customCategories.size} disponibles"
-        val adapter = CategoryAdapter(customCategories) { /* Nota: pendiente */ }
-        binding.rvCustomCategories.layoutManager = GridLayoutManager(requireContext(), 4)
-        binding.rvCustomCategories.adapter = adapter
+    // Recargamos cuando el Fragment vuelve al frente
+    override fun onResume() {
+        super.onResume()
+        cargarCategorias()
     }
-    // Declaramos las categorías por defecto
-    private fun setupDefaultCategories() {
-        val defaultCategories = listOf(
-            Category("Dejar un...", R.drawable.ic_leaf, 0, Color.parseColor("#E74C3C")),
-            Category("Arte",        R.drawable.ic_leaf, 0, Color.parseColor("#E91E8C")),
-            Category("Tarea",       R.drawable.ic_leaf, 0, Color.parseColor("#E91E63")),
-            Category("Meditación",  R.drawable.ic_leaf, 1, Color.parseColor("#9B59B6")),
-            Category("Estudio",     R.drawable.ic_leaf, 2, Color.parseColor("#673AB7")),
-        )
-        val adapter = CategoryAdapter(defaultCategories) { /* Nota: pendiente */ }
-        binding.rvDefaultCategories.layoutManager = GridLayoutManager(requireContext(), 4)
-        binding.rvDefaultCategories.adapter = adapter
+    // Cargamos y separamos las categorías por tipo
+    private fun cargarCategorias() {
+        lifecycleScope.launch {
+            val resultado = categoryRepository.obtenerCategorias()
+
+            resultado.fold(
+                onSuccess = { categorias ->
+                    if (categorias.isEmpty()) {
+                        binding.tvEmptyState.visibility = View.VISIBLE
+                        binding.scrollView.visibility   = View.GONE
+                        return@fold
+                    }
+                    binding.tvEmptyState.visibility = View.GONE
+                    binding.scrollView.visibility   = View.VISIBLE
+                    // Separamos las categorías personalizadas de las por defecto
+                    val personalizadas = categorias.filter { !it.esDefault }
+                    val porDefecto     = categorias.filter { it.esDefault }
+                    // Actualizamos el subtítulo de las categorías personalizadas
+                    binding.tvCustomSubtitle.text =
+                        "${personalizadas.size} disponibles"
+                    // Configuramos el 'RecyclerView' de categorías personalizadas
+                    val adapterPersonalizadas = CategoryAdapter(personalizadas) { }
+                    binding.rvCustomCategories.layoutManager =
+                        GridLayoutManager(requireContext(), 4)
+                    binding.rvCustomCategories.adapter = adapterPersonalizadas
+                    // Configuramos el RecyclerView de las categorías por defecto
+                    val adapterDefecto = CategoryAdapter(porDefecto) { }
+                    binding.rvDefaultCategories.layoutManager =
+                        GridLayoutManager(requireContext(), 4)
+                    binding.rvDefaultCategories.adapter = adapterDefecto
+                },
+                onFailure = {
+                    binding.tvEmptyState.visibility = View.VISIBLE
+                    binding.scrollView.visibility   = View.GONE
+                }
+            )
+        }
     }
-    // Liberamos el binding al destruir la vista del Fragment
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

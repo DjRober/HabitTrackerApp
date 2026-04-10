@@ -56,6 +56,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvHabitName"/>
 
+        <!-- Creamos un chip de categoría, visible solo si el hábito tiene categoría asignada -->
+        <TextView
+            android:id="@+id/tvCategoryChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
+            android:background="@drawable/bg_day_completed"
+            android:fontFamily="@font/dm_sans_medium"
+            android:textSize="11sp"
+            android:textColor="@color/on_accent"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvFrequency"/>
+
         <!-- Días de la semana -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvWeekDays"
@@ -65,7 +81,7 @@
             android:overScrollMode="never"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvFrequency"/>
+            app:layout_constraintTop_toBottomOf="@id/tvCategoryChip"/>
 
         <!-- Divisor -->
         <View

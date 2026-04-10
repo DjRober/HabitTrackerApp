@@ -1,5 +1,6 @@
 package com.example.habittrackerapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
@@ -22,11 +23,12 @@ class HabitDetailActivity : AppCompatActivity() {
     private var completadoHoy = false
     private var habitoId      = ""
     companion object {
-        const val EXTRA_HABIT_ID        = "habit_id"
-        const val EXTRA_HABIT_NAME      = "habit_name"
-        const val EXTRA_HABIT_FREQUENCY = "habit_frequency"
-        const val EXTRA_HABIT_STREAK    = "habit_streak"
-        const val EXTRA_HABIT_PERCENT   = "habit_percent"
+        const val EXTRA_HABIT_ID          = "habit_id"
+        const val EXTRA_HABIT_NAME        = "habit_name"
+        const val EXTRA_HABIT_FREQUENCY   = "habit_frequency"
+        const val EXTRA_HABIT_STREAK      = "habit_streak"
+        const val EXTRA_HABIT_PERCENT     = "habit_percent"
+        const val EXTRA_HABIT_CATEGORY_ID = "habit_category_id"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,15 +56,22 @@ class HabitDetailActivity : AppCompatActivity() {
                 }
             }
         )
-        // Configuramos el historial de la semana
-        configurarSemana()
-        // Botón de completar hábito, esta conectado a Firestore
-        binding.btnComplete.setOnClickListener {
+        configurarSemana()    // Configuramos el historial de la semana
+        binding.btnComplete.setOnClickListener {    // Botón de completar hábito, esta conectado a Firestore
             toggleCompletado()
         }
-        // Declaramos el evento del botón de regreso
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.setOnClickListener {    // Declaramos el evento del botón de regreso
             finish()
+        }
+        // Abre la pantalla de edición con los datos actuales
+        binding.btnEdit.setOnClickListener {
+            val intent = Intent(this, EditHabitActivity::class.java).apply {
+                putExtra(EditHabitActivity.EXTRA_HABIT_ID,          habitoId)
+                putExtra(EditHabitActivity.EXTRA_HABIT_NAME,        intent.getStringExtra(EXTRA_HABIT_NAME) ?: "")
+                putExtra(EditHabitActivity.EXTRA_HABIT_FREQUENCY,   intent.getStringExtra(EXTRA_HABIT_FREQUENCY) ?: "")
+                putExtra(EditHabitActivity.EXTRA_HABIT_CATEGORY_ID, intent.getStringExtra(EXTRA_HABIT_CATEGORY_ID) ?: "")
+            }
+            startActivity(intent)
         }
     }
     // Ajustamos el ancho del relleno de la barra según el porcentaje

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Creamos el layout de la pantalla para crear un hábito nuevo -->
+<!-- Creamos el layout para editar un hábito existente -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".ui.CreateHabitActivity">
+    android:background="@color/background">
+
     <!-- Creamos el círculo decorativo superior derecho -->
     <View
         android:id="@+id/circleTop"
@@ -19,6 +18,7 @@
         android:layout_marginEnd="-60dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
     <!-- Creamos el círculo decorativo inferior izquierdo -->
     <View
         android:id="@+id/circleBottom"
@@ -30,23 +30,42 @@
         android:layout_marginStart="-40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
-    <!-- Creamos el título de la pantalla -->
+
+    <!-- Creamos el botón de regreso -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_arrow_back"
+        android:padding="8dp"
+        app:tint="@color/text_primary"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="Regresar"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Creamos el elemento 'Título' -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/create_habit_title"
+        android:text="@string/edit_habit_title"
         android:fontFamily="@font/playfair_display_bold"
         android:textSize="28sp"
         android:letterSpacing="-0.02"
         android:textColor="@color/text_primary"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <!-- Creamos el 'scroll' para el formulario completo -->
+        app:layout_constraintTop_toBottomOf="@id/btnBack"/>
+
+    <!-- Creamos un scroll para el formulario -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
@@ -65,7 +84,7 @@
             android:paddingHorizontal="24dp"
             android:paddingBottom="16dp">
 
-            <!-- Creamos la 'card' principal con el formulario -->
+            <!-- Creamos un card para el formulario -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,7 +99,7 @@
                     android:orientation="vertical"
                     android:padding="28dp">
 
-                    <!-- Creamos el nombre del hábito (label) -->
+                    <!-- Creamos el elemento label para 'nombre' -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -92,7 +111,7 @@
                         android:textColor="@color/text_secondary"
                         android:layout_marginBottom="8dp"/>
 
-                    <!-- Creamos el nombre del hábito (campo) -->
+                    <!-- Creamos el elemento campo para 'nombre' -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilHabitName"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -123,7 +142,7 @@
                             android:background="@android:color/transparent"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Creamos la sección de 'frecuencia' (label) -->
+                    <!-- Creamos el elemento label para 'frecuencia' -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -135,7 +154,7 @@
                         android:textColor="@color/text_secondary"
                         android:layout_marginBottom="12dp"/>
 
-                    <!-- Creamos la sección de los dos chips tipo toggle (selector de frecuencia) -->
+                    <!-- Creamos los botones de frecuencia -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -143,12 +162,11 @@
                         android:weightSum="2"
                         android:layout_marginBottom="24dp">
 
-                        <!-- Creamos la sección de 'todos los días' (opción) -->
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnFreqDaily"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="68dp"
+                            android:layout_height="56dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="8dp"
                             android:text="@string/frequency_daily"
@@ -160,12 +178,11 @@
                             app:strokeWidth="1.5dp"
                             app:cornerRadius="12dp"/>
 
-                        <!-- Creamos la sección de días específicos (opción) -->
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnFreqCustom"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="68dp"
+                            android:layout_height="56dp"
                             android:layout_weight="1"
                             android:layout_marginStart="8dp"
                             android:text="@string/frequency_custom"
@@ -178,7 +195,7 @@
                             app:cornerRadius="12dp"/>
                     </LinearLayout>
 
-                    <!-- Creamos la sección de 'días' cuando se activa 'días específicos' -->
+                    <!-- Creamos un selector de días, visible solo en modo personalizado -->
                     <LinearLayout
                         android:id="@+id/layoutDays"
                         android:layout_width="match_parent"
@@ -186,7 +203,6 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <!-- Creamos la sección de días (opción) -->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -198,7 +214,6 @@
                             android:textColor="@color/text_secondary"
                             android:layout_marginBottom="12dp"/>
 
-                        <!-- Creamos los días de la semana como chips circulares -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -206,114 +221,70 @@
                             android:weightSum="7"
                             android:layout_marginBottom="8dp">
 
-                            <TextView
-                                android:id="@+id/chipLun"
-                                android:layout_width="0dp"
-                                android:layout_height="40dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="L"
-                                android:fontFamily="@font/dm_sans_medium"
-                                android:textSize="13sp"
-                                android:textColor="@color/text_secondary"
+                            <TextView android:id="@+id/chipLun"
+                                android:layout_width="0dp" android:layout_height="40dp"
+                                android:layout_weight="1" android:gravity="center"
+                                android:text="L" android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp" android:textColor="@color/text_secondary"
                                 android:background="@drawable/bg_chip_day_unselected"
                                 android:layout_marginHorizontal="3dp"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:clickable="true" android:focusable="true"/>
 
-                            <TextView
-                                android:id="@+id/chipMar"
-                                android:layout_width="0dp"
-                                android:layout_height="40dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="M"
-                                android:fontFamily="@font/dm_sans_medium"
-                                android:textSize="13sp"
-                                android:textColor="@color/text_secondary"
+                            <TextView android:id="@+id/chipMar"
+                                android:layout_width="0dp" android:layout_height="40dp"
+                                android:layout_weight="1" android:gravity="center"
+                                android:text="M" android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp" android:textColor="@color/text_secondary"
                                 android:background="@drawable/bg_chip_day_unselected"
                                 android:layout_marginHorizontal="3dp"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:clickable="true" android:focusable="true"/>
 
-                            <TextView
-                                android:id="@+id/chipMie"
-                                android:layout_width="0dp"
-                                android:layout_height="40dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="X"
-                                android:fontFamily="@font/dm_sans_medium"
-                                android:textSize="13sp"
-                                android:textColor="@color/text_secondary"
+                            <TextView android:id="@+id/chipMie"
+                                android:layout_width="0dp" android:layout_height="40dp"
+                                android:layout_weight="1" android:gravity="center"
+                                android:text="X" android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp" android:textColor="@color/text_secondary"
                                 android:background="@drawable/bg_chip_day_unselected"
                                 android:layout_marginHorizontal="3dp"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:clickable="true" android:focusable="true"/>
 
-                            <TextView
-                                android:id="@+id/chipJue"
-                                android:layout_width="0dp"
-                                android:layout_height="40dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="J"
-                                android:fontFamily="@font/dm_sans_medium"
-                                android:textSize="13sp"
-                                android:textColor="@color/text_secondary"
+                            <TextView android:id="@+id/chipJue"
+                                android:layout_width="0dp" android:layout_height="40dp"
+                                android:layout_weight="1" android:gravity="center"
+                                android:text="J" android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp" android:textColor="@color/text_secondary"
                                 android:background="@drawable/bg_chip_day_unselected"
                                 android:layout_marginHorizontal="3dp"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:clickable="true" android:focusable="true"/>
 
-                            <TextView
-                                android:id="@+id/chipVie"
-                                android:layout_width="0dp"
-                                android:layout_height="40dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="V"
-                                android:fontFamily="@font/dm_sans_medium"
-                                android:textSize="13sp"
-                                android:textColor="@color/text_secondary"
+                            <TextView android:id="@+id/chipVie"
+                                android:layout_width="0dp" android:layout_height="40dp"
+                                android:layout_weight="1" android:gravity="center"
+                                android:text="V" android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp" android:textColor="@color/text_secondary"
                                 android:background="@drawable/bg_chip_day_unselected"
                                 android:layout_marginHorizontal="3dp"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:clickable="true" android:focusable="true"/>
 
-                            <TextView
-                                android:id="@+id/chipSab"
-                                android:layout_width="0dp"
-                                android:layout_height="40dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="S"
-                                android:fontFamily="@font/dm_sans_medium"
-                                android:textSize="13sp"
-                                android:textColor="@color/text_secondary"
+                            <TextView android:id="@+id/chipSab"
+                                android:layout_width="0dp" android:layout_height="40dp"
+                                android:layout_weight="1" android:gravity="center"
+                                android:text="S" android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp" android:textColor="@color/text_secondary"
                                 android:background="@drawable/bg_chip_day_unselected"
                                 android:layout_marginHorizontal="3dp"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:clickable="true" android:focusable="true"/>
 
-                            <TextView
-                                android:id="@+id/chipDom"
-                                android:layout_width="0dp"
-                                android:layout_height="40dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="D"
-                                android:fontFamily="@font/dm_sans_medium"
-                                android:textSize="13sp"
-                                android:textColor="@color/text_secondary"
+                            <TextView android:id="@+id/chipDom"
+                                android:layout_width="0dp" android:layout_height="40dp"
+                                android:layout_weight="1" android:gravity="center"
+                                android:text="D" android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp" android:textColor="@color/text_secondary"
                                 android:background="@drawable/bg_chip_day_unselected"
                                 android:layout_marginHorizontal="3dp"
-                                android:clickable="true"
-                                android:focusable="true"/>
-
+                                android:clickable="true" android:focusable="true"/>
                         </LinearLayout>
 
-                        <!-- Creamos la sección de 'mensaje de error' para días -->
                         <TextView
                             android:id="@+id/tvDaysError"
                             android:layout_width="wrap_content"
@@ -325,8 +296,8 @@
                             android:layout_marginTop="6dp"
                             android:layout_marginBottom="8dp"
                             android:visibility="gone"/>
-
                     </LinearLayout>
+
                     <!-- Creamos un divisor -->
                     <View
                         android:layout_width="match_parent"
@@ -335,7 +306,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="24dp"/>
 
-                    <!-- Creamos un label para la sección de categoría -->
+                    <!-- Creamos el elemento label para 'categoría' -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -347,7 +318,7 @@
                         android:textColor="@color/text_secondary"
                         android:layout_marginBottom="8dp"/>
 
-                    <!-- Creamos un selector de categoría tipo spinner visual -->
+                    <!-- Creamos un selector de categoría -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilCategory"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -383,14 +354,14 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Creamos el botón 'guardar' anclado al fondo -->
+    <!-- Creamos un botón para guardar cambios -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
         android:layout_width="0dp"
         android:layout_height="52dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="36dp"
-        android:text="@string/btn_save_habit"
+        android:text="@string/btn_update_habit"
         android:fontFamily="@font/dm_sans_semibold"
         android:textSize="15sp"
         android:letterSpacing="0.04"
