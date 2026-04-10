@@ -3,13 +3,17 @@ package com.example.habittrackerapp
 import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.habittrackerapp.utils.NotificationHelper
 
-class HabitusApp : Application() {
+class HabitusApp : Application() {    // Declaramos la aplicación de Habitus
 
     override fun onCreate() {
         super.onCreate()
-        restaurarTema()    // Restauramos el tema guardado antes de que se infle cualquier vista
+        restaurarTema()
+        // Creamos el canal de notificaciones al inicio de la aplicación.
+        NotificationHelper.crearCanal(this)
     }
+    // Restauramos el tema de la aplicación.
     private fun restaurarTema() {
         val prefs        = getSharedPreferences("habitus_prefs", Context.MODE_PRIVATE)
         val temaGuardado = prefs.getString("app_theme", "light") ?: "light"

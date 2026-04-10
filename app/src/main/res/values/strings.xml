@@ -147,5 +147,10 @@
     <string name="btn_update_habit">Guardar cambios</string>
     <string name="btn_update_loading">Guardando…</string>
     <string name="btn_edit_habit">Editar</string>
+    <!-- Creamos los strings para el canal y contenido del Worker (notificaciones) -->
+    <string name="notif_channel_name">Recordatorios de hábitos</string>
+    <string name="notif_channel_description">Recordatorios diarios para registrar tus hábitos</string>
+    <string name="notif_titulo">¿Cumpliste tus hábitos hoy?</string>
+    <string name="notif_cuerpo">Toca para registrar tu progreso del día.</string>
 
 </resources>
