@@ -7,21 +7,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.habittrackerapp.R
-import com.example.habittrackerapp.data.DayState
-import com.example.habittrackerapp.data.DayStatus
 import com.example.habittrackerapp.data.HabitRepository
 import com.example.habittrackerapp.databinding.ActivityHabitDetailBinding
 import kotlinx.coroutines.launch
 
-// Creamos la clase para mostrar el detalle del hábito
-class HabitDetailActivity : AppCompatActivity() {
-    // Creamos el binding
+class HabitDetailActivity : AppCompatActivity() {    // Declaramos el fragmento de detalle de hábitos
+    // Declaramos los repositorios de hábitos
     private lateinit var binding: ActivityHabitDetailBinding
-    // Declaramos el repositorio de hábitos
     private val habitRepository = HabitRepository()
-    //  Declaramos el estado local del hábito en esta sesión
-    private var completadoHoy = false
+    // Declaramos las variables de estado
     private var habitoId      = ""
+    private var completadoHoy = false
+    private var rachaActual   = 0
+    private var porcentajeActual = 0
+    // Declaramos las constantes de Intent
     companion object {
         const val EXTRA_HABIT_ID          = "habit_id"
         const val EXTRA_HABIT_NAME        = "habit_name"
@@ -30,51 +29,92 @@ class HabitDetailActivity : AppCompatActivity() {
         const val EXTRA_HABIT_PERCENT     = "habit_percent"
         const val EXTRA_HABIT_CATEGORY_ID = "habit_category_id"
     }
-
+    // Configuramos la UI con los datos del hábito
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHabitDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // Recibimos los datos del hábito desde el Intent
-        habitoId           = intent.getStringExtra(EXTRA_HABIT_ID)        ?: ""
-        val nombre         = intent.getStringExtra(EXTRA_HABIT_NAME)      ?: "Hábito"
-        val frecuencia     = intent.getStringExtra(EXTRA_HABIT_FREQUENCY) ?: ""
-        val racha          = intent.getIntExtra(EXTRA_HABIT_STREAK, 0)
-        val porcentaje     = intent.getIntExtra(EXTRA_HABIT_PERCENT, 0)
-        // Poblamos la UI con los datos recibidos
-        binding.tvHabitName.text         = nombre
-        binding.tvFrequency.text         = frecuencia
-        binding.tvStreakValue.text        = racha.toString()
-        binding.tvCompletionPercent.text = "$porcentaje%"
-        // Ajustamos la barra de progreso una vez que el layout esté listo
+        // Obtenemos los datos del Intent
+        habitoId = intent.getStringExtra(EXTRA_HABIT_ID) ?: ""
+        // Mostramos datos del Intent de forma inmediata para que la pantalla no quede en blanco
+        val nombreInicial     = intent.getStringExtra(EXTRA_HABIT_NAME)    ?: "Hábito"
+        val frecuenciaInicial = intent.getStringExtra(EXTRA_HABIT_FREQUENCY) ?: ""
+        rachaActual      = intent.getIntExtra(EXTRA_HABIT_STREAK, 0)
+        porcentajeActual = intent.getIntExtra(EXTRA_HABIT_PERCENT, 0)
+        // Actualizamos la UI con los datos del Intent
+        binding.tvHabitName.text = nombreInicial
+        binding.tvFrequency.text = frecuenciaInicial
+        actualizarUIEstadisticas()
+        // Ajustamos el tamaño de la barra de progreso
         binding.progressFill.viewTreeObserver.addOnGlobalLayoutListener(
             object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
-                    binding.progressFill.viewTreeObserver
-                        .removeOnGlobalLayoutListener(this)
-                    ajustarBarraProgreso(porcentaje)
+                    binding.progressFill.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    ajustarBarraProgreso(porcentajeActual)
                 }
             }
         )
-        configurarSemana()    // Configuramos el historial de la semana
-        binding.btnComplete.setOnClickListener {    // Botón de completar hábito, esta conectado a Firestore
-            toggleCompletado()
-        }
-        binding.btnBack.setOnClickListener {    // Declaramos el evento del botón de regreso
-            finish()
-        }
-        // Abre la pantalla de edición con los datos actuales
+        // Declaramos el evento que regresa a la pantalla anterior
+        binding.btnBack.setOnClickListener { finish() }
+        // Declaramos el evento que edita el hábito
         binding.btnEdit.setOnClickListener {
-            val intent = Intent(this, EditHabitActivity::class.java).apply {
+            val editIntent = Intent(this, EditHabitActivity::class.java).apply {
                 putExtra(EditHabitActivity.EXTRA_HABIT_ID,          habitoId)
-                putExtra(EditHabitActivity.EXTRA_HABIT_NAME,        intent.getStringExtra(EXTRA_HABIT_NAME) ?: "")
-                putExtra(EditHabitActivity.EXTRA_HABIT_FREQUENCY,   intent.getStringExtra(EXTRA_HABIT_FREQUENCY) ?: "")
-                putExtra(EditHabitActivity.EXTRA_HABIT_CATEGORY_ID, intent.getStringExtra(EXTRA_HABIT_CATEGORY_ID) ?: "")
+                putExtra(EditHabitActivity.EXTRA_HABIT_NAME,        nombreInicial)
+                putExtra(EditHabitActivity.EXTRA_HABIT_FREQUENCY,   frecuenciaInicial)
+                putExtra(EditHabitActivity.EXTRA_HABIT_CATEGORY_ID,
+                    intent.getStringExtra(EXTRA_HABIT_CATEGORY_ID) ?: "")
             }
-            startActivity(intent)
+            startActivity(editIntent)
+        }
+
+        binding.btnComplete.setOnClickListener { toggleCompletado() }
+        // Cargamos el estado real desde Firestore -> si ya fue completado hoy e historial de 7 días
+        cargarEstadoReal()
+    }
+    // Consulta Firestore para obtener el estado actual del hábito y el historial de la semana
+    private fun cargarEstadoReal() {
+        if (habitoId.isEmpty()) return
+
+        lifecycleScope.launch {
+            // Verificamos si ya está completado hoy
+            val resultadoCompletado = habitRepository.estaCompletadoHoy(habitoId)
+            resultadoCompletado.fold(
+                onSuccess = { estaCompletado ->
+                    completadoHoy = estaCompletado
+                    actualizarBotonCompletado()
+                },
+                onFailure = { /* Mantenemos completadoHoy = false como estado por defecto */ }
+            )
+            // Obtenemos datos frescos del hábito para racha y porcentaje actualizados
+            val resultadoHabito = habitRepository.obtenerHabito(habitoId)
+            resultadoHabito.fold(
+                onSuccess = { habito ->
+                    rachaActual      = habito.racha
+                    porcentajeActual = habito.porcentaje
+                    actualizarUIEstadisticas()
+                    ajustarBarraProgreso(porcentajeActual)
+                },
+                onFailure = { /* Mantenemos los valores del Intent */ }
+            )
+            // Cargamos el historial real de 7 días
+            cargarHistorial()
         }
     }
-    // Ajustamos el ancho del relleno de la barra según el porcentaje
+    // Obtenemos el historial real de la subcolección y actualiza el RecyclerView
+    private suspend fun cargarHistorial() {
+        val resultado = habitRepository.obtenerHistorial7Dias(habitoId)
+        resultado.fold(
+            onSuccess = { diasReales ->
+                val adapter = com.example.habittrackerapp.ui.DayAdapter(diasReales)
+                binding.rvWeekDays.layoutManager =
+                    LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                binding.rvWeekDays.adapter = adapter
+            },
+            onFailure = { /* El RecyclerView queda vacío si falla la carga */ }
+        )
+    }
+    // Ajustamos el tamaño de la barra de progreso según el porcentaje
     private fun ajustarBarraProgreso(porcentaje: Int) {
         val contenedor  = binding.progressFill.parent as android.view.View
         val anchoPixels = (contenedor.width * porcentaje / 100f).toInt()
@@ -82,57 +122,63 @@ class HabitDetailActivity : AppCompatActivity() {
         params.width    = anchoPixels
         binding.progressFill.layoutParams = params
     }
-    // Configuramos el 'RecyclerView' con los últimos 7 días
-    private fun configurarSemana() {
-        val adapter = DayAdapter(getLast7Days())
-        binding.rvWeekDays.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvWeekDays.adapter = adapter
-    }
-    // Generamos los últimos 7 días dinámicamente
-    private fun getLast7Days(): List<DayStatus> {
-        val days      = mutableListOf<DayStatus>()
-        val dayLabels = listOf("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb")
-
-        for (i in 6 downTo 0) {
-            val cal       = java.util.Calendar.getInstance()
-            cal.add(java.util.Calendar.DAY_OF_YEAR, -i)
-            val label     = dayLabels[cal.get(java.util.Calendar.DAY_OF_WEEK) - 1]
-            val dayNumber = cal.get(java.util.Calendar.DAY_OF_MONTH)
-            val status    = if (i == 0) DayState.TODAY else DayState.MISSED
-            days.add(DayStatus(label, dayNumber, status))
-        }
-        return days
-    }
-    // Alternamos el estado del hábito y actualizamos Firestore
+    // Usamos el resultado de completarHabito para saber si fue un cambio real o ya estaba completado
     private fun toggleCompletado() {
         if (habitoId.isEmpty()) return
-        completadoHoy = !completadoHoy
-        // Actualizamos la UI inmediatamente para dar feedback instantáneo
-        actualizarBotonCompletado()
-        // Actualizamos Firestore en segundo plano
+
+        binding.btnComplete.isEnabled = false
+
         lifecycleScope.launch {
-            if (completadoHoy) {
-                habitRepository.completarHabito(habitoId)
+            if (!completadoHoy) {
+                val resultado = habitRepository.completarHabito(habitoId)
+                resultado.fold(
+                    onSuccess = { fueNuevo ->
+                        if (fueNuevo) {
+                            completadoHoy = true
+                            rachaActual = rachaActual + 1
+                            porcentajeActual = minOf(porcentajeActual + 5, 100)
+                            actualizarUIEstadisticas()
+                            ajustarBarraProgreso(porcentajeActual)
+                        }
+                        // Si fueNuevo == false, ya estaba completado; no modificamos estado local
+                    },
+                    onFailure = { /* El botón recupera su estado sin cambios */ }
+                )
             } else {
-                habitRepository.descompletarHabito(habitoId)
+                val resultado = habitRepository.descompletarHabito(habitoId)
+                resultado.fold(
+                    onSuccess = {
+                        completadoHoy = false
+                        rachaActual = maxOf(rachaActual - 1, 0)
+                        porcentajeActual = maxOf(porcentajeActual - 5, 0)
+                        actualizarUIEstadisticas()
+                        ajustarBarraProgreso(porcentajeActual)
+                    },
+                    onFailure = { /* El botón recupera su estado sin cambios */ }
+                )
             }
+            // Actualizamos el botón
+            actualizarBotonCompletado()
+            binding.btnComplete.isEnabled = true
+            // Refrescamos el historial visual después de cada cambio
+            cargarHistorial()
         }
     }
-    // Actualizamos el aspecto visual del botón según el estado
+    // Actualizamos los TextView de racha y porcentaje con los valores actuales en memoria
+    private fun actualizarUIEstadisticas() {
+        binding.tvStreakValue.text       = rachaActual.toString()
+        binding.tvCompletionPercent.text = "$porcentajeActual%"
+    }
+    // Actualizamos el texto y color del botón según el estado de completación
     private fun actualizarBotonCompletado() {
         if (completadoHoy) {
             binding.btnComplete.text = getString(R.string.detail_btn_completed)
             binding.btnComplete.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(
-                    getColor(R.color.verde_salvia)
-                )
+                android.content.res.ColorStateList.valueOf(getColor(R.color.verde_salvia))
         } else {
             binding.btnComplete.text = getString(R.string.detail_btn_complete)
             binding.btnComplete.backgroundTintList =
-                android.content.res.ColorStateList.valueOf(
-                    getColor(R.color.accent)
-                )
+                android.content.res.ColorStateList.valueOf(getColor(R.color.accent))
         }
     }
 }

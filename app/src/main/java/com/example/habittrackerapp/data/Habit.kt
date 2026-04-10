@@ -1,7 +1,7 @@
 package com.example.habittrackerapp.data
-// Con 'Habit.kt' agregamos el campo de IDs de Firestore
-data class Habit(
-    val id: String = "",           // ID del documento en Firestore
+
+data class Habit(      // Declaramos el modelo de datos de hábito
+    val id: String = "",
     val nombre: String = "",
     val frecuencia: String = "",
     val diasSemana: List<String> = emptyList(),
@@ -11,18 +11,19 @@ data class Habit(
     val categoriaId: String = "",
     val categoriaNombre: String = "",
     val categoriaColor: String = "",
-    // Campos para la UI local, no se guardan en Firestore
+    // Campos calculados en cliente, no persisten en Firestore
     val weekDays: List<DayStatus> = emptyList(),
-    val iconRes: Int = 0
+    val iconRes: Int = 0,
+    val estaCompletadoHoy: Boolean = false
 )
 
-data class DayStatus(
+data class DayStatus(    // Declaramos el modelo de datos de día
     val label: String,
     val dayNumber: Int,
     val status: DayState
 )
 
-enum class DayState {
+enum class DayState {    // Declaramos el estado de un día
     COMPLETED,
     TODAY,
     MISSED,
