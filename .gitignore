@@ -15,5 +15,6 @@
 local.properties
 # Firebase
 app/google-services.json
-# Editor de código
+# Ocultar carpetas de configuración del IDE
 .idea/
+**/.idea/
