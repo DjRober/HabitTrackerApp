@@ -1,5 +1,6 @@
 package com.example.habittrackerapp.data
 
+import com.example.habittrackerapp.data.CategoryRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,12 +12,14 @@ class FirebaseAuthRepository {
     private val firestore = FirebaseFirestore.getInstance()
     // Retorna el usuario actualmente autenticado (null si no hay sesión)
     fun obtenerUsuarioActual(): FirebaseUser? = auth.currentUser
-    // Inicia sesión con correo y contraseña
-    // Retorna 'Result.success' con el usuario o 'Result.failure' con el error
+    // Se inicia sesión, si el usuario no tiene categorías inicializadas las crea en ese momento
     suspend fun iniciarSesion(correo: String, contraseña: String): Result<FirebaseUser> {
         return try {
             val resultado = auth.signInWithEmailAndPassword(correo, contraseña).await()
             val usuario   = resultado.user ?: throw Exception("Usuario no encontrado")
+            // Inicializamos las categorías por defecto si el usuario no las tiene aún
+            CategoryRepository().inicializarCategoriasPorDefecto()
+
             Result.success(usuario)
         } catch (e: Exception) {
             Result.failure(e)
@@ -43,6 +46,8 @@ class FirebaseAuthRepository {
                 .document(usuario.uid)
                 .set(datosUsuario)
                 .await()
+            // Inicializamos las categorías por defecto para el usuario nuevo
+            CategoryRepository().inicializarCategoriasPorDefecto()
 
             Result.success(usuario)
         } catch (e: Exception) {
@@ -58,6 +63,6 @@ class FirebaseAuthRepository {
             Result.failure(e)
         }
     }
-    // Cierra la sesión del usuario actual
+    // Cerramos la sesión del usuario actual
     fun cerrarSesion() = auth.signOut()
 }

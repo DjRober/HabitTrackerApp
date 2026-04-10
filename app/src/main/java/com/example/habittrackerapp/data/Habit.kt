@@ -8,6 +8,9 @@ data class Habit(
     val racha: Int = 0,
     val porcentaje: Int = 0,
     val uid: String = "",
+    val categoriaId: String = "",
+    val categoriaNombre: String = "",
+    val categoriaColor: String = "",
     // Campos para la UI local, no se guardan en Firestore
     val weekDays: List<DayStatus> = emptyList(),
     val iconRes: Int = 0

@@ -130,4 +130,22 @@
     <string name="about_team_title">Equipo de desarrollo</string>
     <string name="about_tech_title">Tecnologías</string>
     <string name="about_footer">Desarrollado como proyecto universitario en la UTCJ — Licenciatura en Ingeniería en Tecnologías de la Información e Innovación Digital.</string>
+    <!-- Creamos los strings para la sección de 'Categorías -->
+    <string name="nueva_categoria_title">Nueva categoría ✦</string>
+    <string name="label_category_name">Nombre de la categoría</string>
+    <string name="hint_category_name">Ej. Hogar, Trabajo, Familia…</string>
+    <string name="label_category_color">Color</string>
+    <string name="btn_save_category">Guardar categoría</string>
+    <string name="error_category_name_empty">El nombre de la categoría es obligatorio</string>
+    <string name="category_habits_count">%d hábitos</string>
+    <string name="categories_empty">Aún no tienes categorías.\nSe crearán al registrarte.</string>
+    <!-- Creamos los strings para el selector de categoría en crear hábito -->
+    <string name="label_category">Categoría</string>
+    <string name="hint_category_select">Selecciona una categoría</string>
+    <!-- Creamos los strings para 'Editar hábito' -->
+    <string name="edit_habit_title">Editar hábito ✦</string>
+    <string name="btn_update_habit">Guardar cambios</string>
+    <string name="btn_update_loading">Guardando…</string>
+    <string name="btn_edit_habit">Editar</string>
+
 </resources>

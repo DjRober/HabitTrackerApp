@@ -1,5 +1,8 @@
 package com.example.habittrackerapp.ui
 
+import android.widget.ArrayAdapter
+import com.example.habittrackerapp.data.CategoryRepository
+import com.example.habittrackerapp.data.HabitCategory
 import androidx.lifecycle.lifecycleScope
 import com.example.habittrackerapp.data.HabitRepository
 import kotlinx.coroutines.launch
@@ -16,6 +19,10 @@ import com.example.habittrackerapp.databinding.ActivityCreateHabitBinding
 class CreateHabitActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateHabitBinding    // Creamos el binding
     private val habitRepository = HabitRepository()    // Declaramos el repositorio de hábitos
+    // Declaramos el repositorio de categorías y el estado de selección
+    private val categoryRepository = CategoryRepository()
+    private var categorias = listOf<HabitCategory>()
+    private var categoriaSeleccionada: HabitCategory? = null
     private var esDiario = true    // 'esDiario' controla el modo de frecuencia seleccionado
     // Mapa de chip -> estado seleccionado (false = no seleccionado)
     private val diasSeleccionados = mutableMapOf<TextView, Boolean>()
@@ -23,8 +30,8 @@ class CreateHabitActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateHabitBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // Inicializamos el mapa de días con sus TextViews
-        inicializarChipsDias()
+        inicializarChipsDias()    // Inicializamos el mapa de días con sus TextViews
+        cargarCategorias()        // Cargamos las categorías disponibles del usuario al iniciar
         // Selector de frecuencia
         binding.btnFreqDaily.setOnClickListener  { seleccionarFrecuencia(diario = true) }
         binding.btnFreqCustom.setOnClickListener { seleccionarFrecuencia(diario = false) }
@@ -37,6 +44,28 @@ class CreateHabitActivity : AppCompatActivity() {
         // Limpiamos error del nombre mientras el usuario escribe
         binding.edtHabitName.setOnFocusChangeListener { _, _ ->
             binding.tilHabitName.error = null
+        }
+    }
+    // Cargamos las categorías disponibles del usuario
+    private fun cargarCategorias() {
+        lifecycleScope.launch {
+            val resultado = categoryRepository.obtenerCategorias()
+            resultado.fold(
+                onSuccess = { lista ->
+                    categorias = lista
+                    val nombres = lista.map { it.nombre }
+                    val adapter = ArrayAdapter(
+                        this@CreateHabitActivity,
+                        android.R.layout.simple_dropdown_item_1line,
+                        nombres
+                    )
+                    binding.actvCategory.setAdapter(adapter)
+                    binding.actvCategory.setOnItemClickListener { _, _, position, _ ->
+                        categoriaSeleccionada = lista[position]
+                    }
+                },
+                onFailure = { }
+            )
         }
     }
     // Registramos los chips de días en el mapa y asignamos su comportamiento de toggle
@@ -166,7 +195,7 @@ class CreateHabitActivity : AppCompatActivity() {
         binding.btnSave.text      = getString(R.string.btn_save_loading)
 
         lifecycleScope.launch {
-            val resultado = habitRepository.guardarHabito(nombre, frecuencia, diasLista)
+            val resultado = habitRepository.guardarHabito(nombre, frecuencia, diasLista, categoriaSeleccionada?.id ?: "")
 
             resultado.fold(
                 onSuccess = {

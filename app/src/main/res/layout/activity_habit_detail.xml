@@ -278,4 +278,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Creamos el boton de editar en la esquina superior derecha -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEdit"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:text="@string/btn_edit_habit"
+        android:fontFamily="@font/dm_sans_medium"
+        android:textSize="12sp"
+        android:textColor="@color/accent"
+        app:strokeColor="@color/accent"
+        app:strokeWidth="1.5dp"
+        app:cornerRadius="10dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="52dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

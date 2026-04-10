@@ -26,8 +26,26 @@ class HabitAdapter(
         with(holder.binding) {
             tvHabitName.text = habit.nombre
             tvFrequency.text = habit.frecuencia
-            tvStreak.text = "🔗 ${habit.racha}"
-            tvPercent.text = "✓ ${habit.porcentaje}%"
+            tvStreak.text    = "🔗 ${habit.racha}"
+            tvPercent.text   = "✓ ${habit.porcentaje}%"
+            // Mostramos el chip de categoría solo si tiene una asignada
+            if (habit.categoriaNombre.isNotEmpty()) {
+                tvCategoryChip.visibility = android.view.View.VISIBLE
+                tvCategoryChip.text       = habit.categoriaNombre
+                // Aplicamos el color de la categoría al fondo del chip
+                try {
+                    val color = android.graphics.Color.parseColor(habit.categoriaColor)
+                    tvCategoryChip.backgroundTintList =
+                        android.content.res.ColorStateList.valueOf(color)
+                } catch (e: Exception) {
+                    tvCategoryChip.backgroundTintList =
+                        android.content.res.ColorStateList.valueOf(
+                            android.graphics.Color.parseColor("#C8614A")
+                        )
+                }
+            } else {
+                tvCategoryChip.visibility = android.view.View.GONE
+            }
 
             rvWeekDays.layoutManager =
                 LinearLayoutManager(root.context, LinearLayoutManager.HORIZONTAL, false)

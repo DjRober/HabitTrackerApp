@@ -68,20 +68,20 @@ class HabitsFragment : Fragment() {
                             habit.copy(weekDays = getLast7Days())
                         }
                         val adapter = HabitAdapter(habitsConDias) { habit ->
-                            val intent = Intent(    // Al tocar un hábito abrimos su detalle
+                            val intent = Intent(    // Al hacer clic en un hábito, lo mostramos en detalle
                                 requireContext(),
                                 HabitDetailActivity::class.java
                             ).apply {
-                                putExtra(HabitDetailActivity.EXTRA_HABIT_ID,        habit.id)
-                                putExtra(HabitDetailActivity.EXTRA_HABIT_NAME,      habit.nombre)
-                                putExtra(HabitDetailActivity.EXTRA_HABIT_FREQUENCY, habit.frecuencia)
-                                putExtra(HabitDetailActivity.EXTRA_HABIT_STREAK,    habit.racha)
-                                putExtra(HabitDetailActivity.EXTRA_HABIT_PERCENT,   habit.porcentaje)
+                                putExtra(HabitDetailActivity.EXTRA_HABIT_ID,          habit.id)
+                                putExtra(HabitDetailActivity.EXTRA_HABIT_NAME,        habit.nombre)
+                                putExtra(HabitDetailActivity.EXTRA_HABIT_FREQUENCY,   habit.frecuencia)
+                                putExtra(HabitDetailActivity.EXTRA_HABIT_STREAK,      habit.racha)
+                                putExtra(HabitDetailActivity.EXTRA_HABIT_PERCENT,     habit.porcentaje)
+                                putExtra(HabitDetailActivity.EXTRA_HABIT_CATEGORY_ID, habit.categoriaId)
                             }
                             startActivity(intent)
                         }
                         binding.rvHabits.adapter = adapter
-
                         // Activamos el swipe para eliminar con la lista y adaptador actuales
                         configurarSwipeEliminar(adapter, habitsConDias)
                     }
