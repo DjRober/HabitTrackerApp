@@ -12,10 +12,11 @@ import com.example.habittrackerapp.data.HabitRepository
 import com.example.habittrackerapp.databinding.FragmentProfileBinding
 import kotlinx.coroutines.launch
 
-class ProfileFragment : Fragment() {    // Declaramos el fragmento de perfil
-    private var _binding: FragmentProfileBinding? = null    // Declaramos el binding
-    private val binding get() = _binding!!    // Declaramos el binding get()
-    // Declaramos los repositorios de autenticación y hábitos
+class ProfileFragment : Fragment() {    // Declaramos el fragmento ProfileFragment
+    // Declaramos las variables de enlace de vista
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
+    // Declaramos los repositorios de autenticación y de hábitos
     private val authRepository  = FirebaseAuthRepository()
     private val habitRepository = HabitRepository()
 
@@ -27,16 +28,15 @@ class ProfileFragment : Fragment() {    // Declaramos el fragmento de perfil
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
-    // Configuramos la UI con los datos del usuario
+    // Configuramos el comportamiento de la interfaz de usuario
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val usuario = authRepository.obtenerUsuarioActual()
 
         if (usuario != null) {
-            // Mostramos el correo inmediatamente desde Firebase Auth (disponible sin red)
             binding.tvUserEmail.text = usuario.email ?: ""
-            // Obtenemos el nombre desde Firestore a través del repositorio
+
             lifecycleScope.launch {
                 val resultado = authRepository.obtenerNombreUsuario()
                 resultado.fold(
@@ -51,14 +51,15 @@ class ProfileFragment : Fragment() {    // Declaramos el fragmento de perfil
                 )
             }
         }
-        // Cargamos estadísticas reales
+        // Cargamos las estadísticas del usuario
         lifecycleScope.launch {
             val resultado = habitRepository.obtenerEstadisticas()
             resultado.fold(
-                onSuccess = { (totalHabitos, completadosHoy, rachaMaxima) ->
-                    binding.tvStatHabits.text    = totalHabitos.toString()
-                    binding.tvStatStreak.text    = rachaMaxima.toString()
-                    binding.tvStatCompleted.text = completadosHoy.toString()
+                onSuccess = { stats ->
+                    binding.tvStatHabits.text    = stats.totalHabitos.toString()
+                    binding.tvStatStreak.text    = stats.rachaMaxima.toString()
+                    // Ahora sí muestra el total histórico de completaciones
+                    binding.tvStatCompleted.text = stats.totalCompletaciones.toString()
                 },
                 onFailure = {
                     binding.tvStatHabits.text    = "0"
@@ -67,7 +68,7 @@ class ProfileFragment : Fragment() {    // Declaramos el fragmento de perfil
                 }
             )
         }
-        // Configuramos los listeners de los botones de configuración
+        // Configuramos los listeners de los botones
         binding.optionNotifications.setOnClickListener {
             startActivity(Intent(requireContext(), NotificationsActivity::class.java))
         }
@@ -80,7 +81,7 @@ class ProfileFragment : Fragment() {    // Declaramos el fragmento de perfil
         binding.optionAbout.setOnClickListener {
             startActivity(Intent(requireContext(), AboutActivity::class.java))
         }
-        // Cerramos sesión
+        // Cerramos la sesión (Usuario)
         binding.btnLogout.setOnClickListener {
             authRepository.cerrarSesion()
             val intent = Intent(requireContext(), InicioSesionInterfaz::class.java)
@@ -88,7 +89,7 @@ class ProfileFragment : Fragment() {    // Declaramos el fragmento de perfil
             startActivity(intent)
         }
     }
-    // Limpiamos el binding
+    // Limpiamos el enlace de vista
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

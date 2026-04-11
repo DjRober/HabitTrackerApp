@@ -12,12 +12,13 @@ import com.example.habittrackerapp.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class HomeFragment : Fragment() {
-    // Creamos el binding, se anula en 'onDestroyView' para evitar memory leaks
+class HomeFragment : Fragment() {    // Declaramos el fragmento HomeFragment
+    // Declaramos las variables de enlace de vista
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     // Declaramos el repositorio de hábitos
     private val habitRepository = HabitRepository()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -26,19 +27,19 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    // Configuramos el comportamiento de la interfaz de usuario
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configurarSaludo()
         configurarFecha()
         cargarEstadisticas()
     }
-    // Recargamos las estadísticas cada vez que el Fragment vuelve al frente
+    // Cargamos las estadísticas al volver a la pantalla
     override fun onResume() {
         super.onResume()
         cargarEstadisticas()
     }
-    // 'configurarSaludo' saluda según la hora del día
+    // Configuramos el saludo según la hora del día
     private fun configurarSaludo() {
         val hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         binding.tvGreeting.text = when {
@@ -47,7 +48,7 @@ class HomeFragment : Fragment() {
             else      -> getString(R.string.home_greeting_evening)
         }
     }
-    // 'configurarFecha' muestra la fecha actual de forma legible
+    // Configuramos la fecha actual
     private fun configurarFecha() {
         val cal       = Calendar.getInstance()
         val diasSemana = listOf(
@@ -58,26 +59,22 @@ class HomeFragment : Fragment() {
             "enero", "febrero", "marzo", "abril", "mayo", "junio",
             "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
         )
-
         val diaSemana = diasSemana[cal.get(Calendar.DAY_OF_WEEK) - 1]
         val dia       = cal.get(Calendar.DAY_OF_MONTH)
         val mes       = meses[cal.get(Calendar.MONTH)]
-
         binding.tvDate.text = "$diaSemana, $dia de $mes"
     }
-    // Cargamos las estadísticas reales desde Firestore
+    // Cargamos las estadísticas del usuario
     private fun cargarEstadisticas() {
         lifecycleScope.launch {
             val resultado = habitRepository.obtenerEstadisticas()
-
             resultado.fold(
-                onSuccess = { (totalHabitos, completadosHoy, rachaMaxima) ->
-                    binding.tvStatActivos.text     = totalHabitos.toString()
-                    binding.tvStatCompletados.text = completadosHoy.toString()
-                    binding.tvStatRacha.text       = rachaMaxima.toString()
+                onSuccess = { stats ->
+                    binding.tvStatActivos.text     = stats.totalHabitos.toString()
+                    binding.tvStatCompletados.text = stats.completadosHoy.toString()
+                    binding.tvStatRacha.text       = stats.rachaMaxima.toString()
                 },
                 onFailure = {
-                    // En caso de error mostramos ceros
                     binding.tvStatActivos.text     = "0"
                     binding.tvStatCompletados.text = "0"
                     binding.tvStatRacha.text       = "0"
@@ -85,7 +82,7 @@ class HomeFragment : Fragment() {
             )
         }
     }
-    // Liberamos el binding
+    // Limpiamos el enlace de vista
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
