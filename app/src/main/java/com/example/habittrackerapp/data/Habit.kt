@@ -1,12 +1,13 @@
 package com.example.habittrackerapp.data
 
-data class Habit(      // Declaramos el modelo de datos de hábito
+data class Habit(    // Declaramos el modelo de datos para los hábitos
     val id: String = "",
     val nombre: String = "",
     val frecuencia: String = "",
     val diasSemana: List<String> = emptyList(),
     val racha: Int = 0,
     val porcentaje: Int = 0,
+    val totalCompletaciones: Int = 0,
     val uid: String = "",
     val categoriaId: String = "",
     val categoriaNombre: String = "",
@@ -17,13 +18,13 @@ data class Habit(      // Declaramos el modelo de datos de hábito
     val estaCompletadoHoy: Boolean = false
 )
 
-data class DayStatus(    // Declaramos el modelo de datos de día
+data class DayStatus(    // Declaramos el modelo de datos para el estado de los días
     val label: String,
     val dayNumber: Int,
     val status: DayState
 )
 
-enum class DayState {    // Declaramos el estado de un día
+enum class DayState {    // Declaramos el modelo de datos para los estados de los días
     COMPLETED,
     TODAY,
     MISSED,
