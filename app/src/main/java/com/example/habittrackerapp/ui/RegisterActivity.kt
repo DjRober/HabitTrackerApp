@@ -31,6 +31,12 @@ class RegisterActivity : AppCompatActivity() {
         binding.tvLoginLink.setOnClickListener {
             finish()
         }
+
+        binding.btnGoogleRegister.visibility = android.view.View.VISIBLE
+
+        binding.btnGoogleRegister.setOnClickListener {
+            ejecutarRegistroGoogle()
+        }
         // Limpiamos errores mientras el usuario escribe
         binding.edtName.setOnFocusChangeListener { _, _ ->
             binding.tilName.error = null
@@ -117,6 +123,36 @@ class RegisterActivity : AppCompatActivity() {
                     binding.btnRegister.isEnabled = true
                     binding.btnRegister.text      = getString(R.string.btn_register)
                     binding.tilEmail.error        = it.message
+                }
+            )
+        }
+    }
+
+    private fun ejecutarRegistroGoogle() {
+        binding.btnGoogleRegister.isEnabled = false
+
+        val webClientId = getString(R.string.default_web_client_id)
+
+        lifecycleScope.launch {
+            val resultado = authRepository.iniciarSesionConGoogle(
+                context     = this@RegisterActivity,
+                webClientId = webClientId
+            )
+
+            resultado.fold(
+                onSuccess = {
+                    val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                   Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                },
+                onFailure = { error ->
+                    binding.btnGoogleRegister.isEnabled = true
+                    android.widget.Toast.makeText(
+                        this@RegisterActivity,
+                        error.message ?: getString(R.string.error_invalid_credentials),
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
                 }
             )
         }

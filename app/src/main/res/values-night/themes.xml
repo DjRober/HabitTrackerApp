@@ -1,13 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#121212</color>
+    <style name="Base.Theme.HabitTrackerApp"
+           parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorOnPrimary">@color/on_accent</item>
+        <item name="colorPrimaryContainer">@color/accent_light</item>
+        <item name="colorOnPrimaryContainer">@color/on_accent</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/input_background</item>
+        <item name="colorOutline">@color/input_stroke_default</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="colorSecondaryContainer">@color/accent_light</item>
+        <item name="colorOnSecondaryContainer">@color/on_accent</item>
+    </style>
 
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#A0A0A0</color>
-
-    <color name="card_background">#1E1E1E</color>
-
-    <color name="divider_color">#333333</color>
-
-    <color name="accent">#C8614A</color>
+    <style name="Theme.HabitTrackerApp"
+           parent="Base.Theme.HabitTrackerApp" />
 </resources>

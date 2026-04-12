@@ -4,14 +4,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-// Creamos una clase para representar una categoría de hábitos (modelo)
+// Creamos 'HabitCategory' para representar una categoría de hábitos (modelo)
 data class HabitCategory(
     val id: String       = "",
     val nombre: String   = "",
     val color: String    = "#C8614A",
     val esDefault: Boolean = false,
     val uid: String      = "",
-    val totalHabitos: Int = 0    // Se calcula en el cliente, no se guarda en Firestore
+    val totalHabitos: Int = 0    // Hacemos el cálculo localmente
 )
 
 class CategoryRepository {    // Interactuamos con Firestore
@@ -74,13 +74,14 @@ class CategoryRepository {    // Interactuamos con Firestore
     suspend fun inicializarCategoriasPorDefecto(): Result<Unit> {
         return try {
             val uid = obtenerUid()
-            // Verificamos si ya tiene categorías para no duplicar
-            val existentes = firestore.collection("categorias")
+            // Verificamos si ya existen categorías por defecto
+            val defaultsExistentes = firestore.collection("categorias")
                 .whereEqualTo("uid", uid)
+                .whereEqualTo("esDefault", true)
                 .get()
                 .await()
-
-            if (existentes.isEmpty) {
+            // Si no existen, las creamos
+            if (defaultsExistentes.isEmpty) {
                 val categoriasPorDefecto = listOf(
                     mapOf("nombre" to "Salud",      "color" to "#C8614A", "esDefault" to true),
                     mapOf("nombre" to "Estudio",    "color" to "#673AB7", "esDefault" to true),
@@ -88,12 +89,12 @@ class CategoryRepository {    // Interactuamos con Firestore
                     mapOf("nombre" to "Arte",       "color" to "#E91E8C", "esDefault" to true),
                     mapOf("nombre" to "Deporte",    "color" to "#E74C3C", "esDefault" to true)
                 )
-
+                // Realizamos la escritura en lote
                 val batch = firestore.batch()
                 categoriasPorDefecto.forEach { categoria ->
                     val ref = firestore.collection("categorias").document()
                     batch.set(ref, categoria + mapOf(
-                        "uid"          to uid,
+                        "uid"           to uid,
                         "fechaCreacion" to com.google.firebase.Timestamp.now()
                     ))
                 }

@@ -139,7 +139,7 @@
     <string name="error_category_name_empty">El nombre de la categoría es obligatorio</string>
     <string name="category_habits_count">%d hábitos</string>
     <string name="categories_empty">Aún no tienes categorías.\nSe crearán al registrarte.</string>
-    <!-- Creamos los strings para el selector de categoría en crear hábito -->
+    <!-- Creamos los strings para el selector de categoría en 'Crear hábito' -->
     <string name="label_category">Categoría</string>
     <string name="hint_category_select">Selecciona una categoría</string>
     <!-- Creamos los strings para 'Editar hábito' -->
@@ -152,5 +152,49 @@
     <string name="notif_channel_description">Recordatorios diarios para registrar tus hábitos</string>
     <string name="notif_titulo">¿Cumpliste tus hábitos hoy?</string>
     <string name="notif_cuerpo">Toca para registrar tu progreso del día.</string>
+
+    <!--    Creamos el string para el logueo con 'Google'-->
+    <string name="default_web_client_id">914592761077-ch1thvtere5u9cadk9a3t6jtb93tliri.apps.googleusercontent.com</string>
+
+    <!-- Creamos los strings para los 'Hábitados archivados' -->
+    <string name="habit_archived">Hábito archivado</string>
+    <string name="habit_restored">Hábito restaurado</string>
+    <string name="ver_archivados">Ver archivados</string>
+    <string name="archivados_title">Archivados</string>
+    <string name="no_archivados">No tienes hábitos archivados.</string>
+    <string name="btn_restore">Restaurar</string>
+    <string name="btn_delete_permanent">Eliminar</string>
+
+    <!-- Creamos los strings para los 'Días de gracia' -->
+    <string name="label_grace_days">Días de gracia</string>
+    <string name="hint_grace_days">Días que puedes fallar sin romper la racha</string>
+    <string name="grace_0">0 días</string>
+    <string name="grace_1">1 día</string>
+    <string name="grace_2">2 días</string>
+
+    <!-- Creamos los strings para el 'Resumen semanal' -->
+    <string name="weekly_title">Resumen semanal</string>
+    <string name="weekly_label_completion">Cumplimiento semanal</string>
+    <string name="weekly_label_best_streak">Mejor racha</string>
+    <string name="weekly_label_needs_attention">Necesita atención</string>
+    <string name="weekly_detail_completaciones">%1$d de %2$d días programados</string>
+    <string name="weekly_none">Sin datos</string>
+    <string name="weekly_all_good">¡Todo en orden esta semana!</string>
+    <string name="weekly_msg_perfect">¡Semana perfecta! Has completado todos tus hábitos. ¡Sigue así!</string>
+    <string name="weekly_msg_great">Excelente semana con un %1$d%%. ¡Estás en racha!</string>
+    <string name="weekly_msg_good">Buen avance. Cada día cuenta para construir el hábito.</string>
+    <string name="weekly_msg_no_habits">Crea tu primer hábito y comienza a construir hacia tus metas.</string>
+    <string name="weekly_msg_keep_going">Aún hay tiempo para mejorar. Empieza ahora, un hábito a la vez.</string>
+    <string name="notif_weekly_title">Tu resumen semanal</string>
+    <string name="notif_weekly_body">Esta semana cumpliste el %1$d%% de tus hábitos. Racha máxima: %2$d días.</string>
+
+    <!-- Creamos los strings para el 'Home inteligente' -->
+    <string name="home_msg_loading">Cargando tu resumen…</string>
+    <string name="home_msg_perfect">Semana perfecta. ¡Sigue imparable!</string>
+    <string name="home_msg_great">¡Vas genial esta semana! Tú puedes.</string>
+    <string name="home_msg_good">Buen ritmo. Sigue acumulando hábitos.</string>
+    <string name="home_msg_streak">Racha de %1$d días. ¡No la rompas!</string>
+    <string name="home_msg_start">Un buen día para comenzar. ¡Adelante!</string>
+    <string name="home_btn_weekly">Ver resumen semanal >>></string>
 
 </resources>

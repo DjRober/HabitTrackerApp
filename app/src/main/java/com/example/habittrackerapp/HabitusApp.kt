@@ -12,6 +12,7 @@ class HabitusApp : Application() {    // Declaramos la aplicación de Habitus
         restaurarTema()
         // Creamos el canal de notificaciones al inicio de la aplicación.
         NotificationHelper.crearCanal(this)
+        NotificationHelper.programarResumenSemanal(this)
     }
     // Restauramos el tema de la aplicación.
     private fun restaurarTema() {

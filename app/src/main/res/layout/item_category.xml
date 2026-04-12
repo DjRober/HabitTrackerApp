@@ -15,7 +15,6 @@
         android:layout_height="64dp"
         android:padding="14dp"
         android:background="@drawable/bg_day_completed"
-        app:tint="@color/terracota"
         tools:src="@drawable/ic_leaf" />
 
     <TextView

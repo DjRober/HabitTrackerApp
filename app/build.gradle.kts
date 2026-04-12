@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.habittrackerapp"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -58,4 +58,8 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime)
+
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services)
+    implementation(libs.googleid)
 }

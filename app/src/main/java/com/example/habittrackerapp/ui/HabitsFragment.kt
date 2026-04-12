@@ -40,6 +40,9 @@ class HabitsFragment : Fragment() {    // Declaramos el fragmento de hábitos
         binding.fab.setOnClickListener {
             startActivity(Intent(requireContext(), CreateHabitActivity::class.java))
         }
+        binding.tvVerArchivados.setOnClickListener {
+            startActivity(Intent(requireContext(), ArchivedHabitsActivity::class.java))
+        }
         cargarHabitos()
     }
     override fun onResume() {    // Actualizamos la UI con los hábitos
@@ -78,9 +81,9 @@ class HabitsFragment : Fragment() {    // Declaramos el fragmento de hábitos
                             }
                             startActivity(intent)
                         }
-                        // Configuramos el swipe eliminar
+                        // Configuramos el swipe para archivar
                         binding.rvHabits.adapter = adapter
-                        configurarSwipeEliminar(adapter, habitsConDias)
+                        configurarSwipe(adapter, habitsConDias)
                     }
                 },
                 onFailure = {
@@ -93,7 +96,7 @@ class HabitsFragment : Fragment() {    // Declaramos el fragmento de hábitos
     /* Construye los 7 días de la semana para la vista de lista, el estado de hoy
      se determina con el campo calculado del repositorio. Los días pasados se
      muestran como 'NOT_APPLICABLE' -> en la lista no tenemos el historial completo;
-      ese detalle pertenece a la pantalla de detalle del hábito */
+     ese detalle pertenece a la pantalla de detalle del hábito */
     private fun construirDiasParaLista(completadoHoy: Boolean): List<DayStatus> {
         val dias      = mutableListOf<DayStatus>()
         val etiquetas = listOf("Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb")
@@ -115,8 +118,8 @@ class HabitsFragment : Fragment() {    // Declaramos el fragmento de hábitos
 
         return dias
     }
-    // Configuramos el swipe eliminar
-    private fun configurarSwipeEliminar(adapter: HabitAdapter, habitos: List<Habit>) {
+    // Configuramos el swipe para archivar (en lugar de eliminar permanentemente)
+    private fun configurarSwipe(adapter: HabitAdapter, habitos: List<Habit>) {
         val itemTouchHelper = ItemTouchHelper(
             object : ItemTouchHelper.SimpleCallback(
                 0,
@@ -133,18 +136,24 @@ class HabitsFragment : Fragment() {    // Declaramos el fragmento de hábitos
                     direction: Int
                 ) {
                     val posicion = viewHolder.adapterPosition
-                    val habitoId = habitos[posicion].id
+                    val habito   = habitos[posicion]
 
                     lifecycleScope.launch {
-                        val resultado = habitRepository.eliminarHabito(habitoId)
+                        val resultado = habitRepository.archivarHabito(habito.id)
                         resultado.fold(
                             onSuccess = {
                                 cargarHabitos()
                                 Snackbar.make(
                                     binding.root,
-                                    getString(R.string.habit_deleted),
+                                    getString(R.string.habit_archived),
                                     Snackbar.LENGTH_LONG
-                                ).show()
+                                ).setAction(getString(R.string.habit_undo)) {
+                                    // Deshacer: restaurar el hábito inmediatamente
+                                    lifecycleScope.launch {
+                                        habitRepository.restaurarHabito(habito.id)
+                                        cargarHabitos()
+                                    }
+                                }.show()
                             },
                             onFailure = {
                                 adapter.notifyItemChanged(posicion)
@@ -158,6 +167,8 @@ class HabitsFragment : Fragment() {    // Declaramos el fragmento de hábitos
     }
     // Mostramos la carga
     private fun mostrarCarga(mostrar: Boolean) {
+        binding.progressBar.visibility =
+            if (mostrar) View.VISIBLE else View.GONE
         binding.rvHabits.visibility =
             if (mostrar) View.GONE else View.VISIBLE
     }

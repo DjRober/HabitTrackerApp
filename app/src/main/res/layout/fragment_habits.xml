@@ -42,6 +42,22 @@
         android:textColor="@color/text_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <!-- Creamos el texto 'Ver archivados' -->
+    <TextView
+        android:id="@+id/tvVerArchivados"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ver_archivados"
+        android:fontFamily="@font/dm_sans_medium"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:paddingVertical="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"/>
     <!-- Creamos la lista de hábitos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHabits"
@@ -51,11 +67,22 @@
         android:paddingBottom="16dp"
         android:clipToPadding="false"
         android:overScrollMode="never"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvVerArchivados"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_habit" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <!-- Creamos un 'estado vacío', se muestra cuando no hay hábitos -->
     <TextView
         android:id="@+id/tvEmptyState"

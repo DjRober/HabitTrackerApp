@@ -42,6 +42,13 @@ class InicioSesionInterfaz : AppCompatActivity() {
         binding.tvForgotPassword.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
+
+        binding.llDivider.visibility = android.view.View.VISIBLE
+        binding.btnGoogle.visibility = android.view.View.VISIBLE
+
+        binding.btnGoogle.setOnClickListener {
+            ejecutarLoginGoogle()
+        }
         // Limpiamos errores cuando el usuario empieza a escribir
         binding.edtCorreo.setOnFocusChangeListener { _, _ ->
             binding.tilEmail.error = null
@@ -110,5 +117,32 @@ class InicioSesionInterfaz : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                 Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+    }
+
+    private fun ejecutarLoginGoogle() {
+        binding.btnGoogle.isEnabled = false
+
+        val webClientId = getString(R.string.default_web_client_id)
+
+        lifecycleScope.launch {
+            val resultado = authRepository.iniciarSesionConGoogle(
+                context     = this@InicioSesionInterfaz,
+                webClientId = webClientId
+            )
+
+            resultado.fold(
+                onSuccess = {
+                    navegarAlHome()
+                },
+                onFailure = { error ->
+                    binding.btnGoogle.isEnabled = true
+                    android.widget.Toast.makeText(
+                        this@InicioSesionInterfaz,
+                        error.message ?: getString(R.string.error_invalid_credentials),
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
+                }
+            )
+        }
     }
 }

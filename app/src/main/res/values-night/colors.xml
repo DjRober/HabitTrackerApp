@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Declaramos el color para los fondos -->
+    <color name="background">#121212</color>
+    <color name="card_background">#1E1E1E</color>
+    <color name="input_background">#2A2A2A</color>
+
+    <!-- Declaramos el terracota acento -->
+    <color name="accent">#C8614A</color>
+    <color name="accent_light">#3D2520</color>
+    <color name="accent_ripple">#33C8614A</color>
+    <color name="on_accent">#FFFFFF</color>
+
+    <!-- Declaramos los colores para los textos -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#A0A0A0</color>
+    <color name="text_hint">#666666</color>
+
+    <!-- Declaramos los colores para los bordes y divisores -->
+    <color name="divider_color">#333333</color>
+    <color name="input_stroke_default">#444444</color>
+    <color name="input_stroke_focused">#C8614A</color>
+    <color name="ripple_neutral">#1AFFFFFF</color>
+
+    <!-- Declaramos los colores semánticos -->
+    <color name="terracota">#C8614A</color>
+    <color name="terracota_light">#3D2520</color>
+    <color name="verde_salvia">#7DAF8F</color>
+
+    <!-- En oscuro el error debe ser más luminoso para ser visible -->
+    <color name="error_text">#FF6B6B</color>
+</resources>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/card_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/tvNombreArchivado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/playfair_display_semibold"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"/>
+
+        <TextView
+            android:id="@+id/tvFrecuenciaArchivado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/dm_sans"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"/>
+
+        <TextView
+            android:id="@+id/tvRachaArchivado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/dm_sans"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRestaurar"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="@string/btn_restore"
+                android:fontFamily="@font/dm_sans_medium"
+                android:textSize="13sp"
+                android:textColor="@color/on_accent"
+                app:backgroundTint="@color/accent"
+                app:cornerRadius="10dp"
+                app:elevation="0dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEliminar"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="@string/btn_delete_permanent"
+                android:fontFamily="@font/dm_sans_medium"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                app:strokeColor="@color/divider_color"
+                app:cornerRadius="10dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

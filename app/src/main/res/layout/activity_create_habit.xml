@@ -321,12 +321,91 @@
                             android:text="@string/error_no_days_selected"
                             android:fontFamily="@font/dm_sans"
                             android:textSize="12sp"
-                            android:textColor="#B00020"
+                            android:textColor="@color/error_text"
                             android:layout_marginTop="6dp"
                             android:layout_marginBottom="8dp"
                             android:visibility="gone"/>
 
                     </LinearLayout>
+
+                    <!-- Sección: días de gracia -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_grace_days"
+                        android:fontFamily="@font/dm_sans_medium"
+                        android:textSize="12sp"
+                        android:letterSpacing="0.08"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_grace_days"
+                        android:fontFamily="@font/dm_sans"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_hint"
+                        android:layout_marginBottom="10dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3"
+                        android:layout_marginBottom="20dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGrace0"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="@string/grace_0"
+                            android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="12sp"
+                            android:textColor="@color/on_accent"
+                            app:backgroundTint="@color/accent"
+                            app:strokeColor="@color/accent"
+                            app:strokeWidth="1.5dp"
+                            app:cornerRadius="12dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGrace1"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="@string/grace_1"
+                            android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            app:backgroundTint="@android:color/transparent"
+                            app:strokeColor="@color/divider_color"
+                            app:strokeWidth="1.5dp"
+                            app:cornerRadius="12dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGrace2"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/grace_2"
+                            android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            app:backgroundTint="@android:color/transparent"
+                            app:strokeColor="@color/divider_color"
+                            app:strokeWidth="1.5dp"
+                            app:cornerRadius="12dp"/>
+                    </LinearLayout>
+
                     <!-- Creamos un divisor -->
                     <View
                         android:layout_width="match_parent"
@@ -334,6 +413,76 @@
                         android:background="@color/divider_color"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="24dp"/>
+
+                    <!-- Tipo cognitivo -->
+                    <TextView
+                        android:id="@+id/tvLabelTipo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tipo"
+                        android:fontFamily="@font/dm_sans_medium"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:scrollbars="none">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupTipo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true"
+                            app:selectionRequired="true">
+
+                            <com.google.android.material.chip.Chip
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Físico"
+                                android:checked="true"
+                                android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp"/>
+
+                            <com.google.android.material.chip.Chip
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mental"
+                                android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp"/>
+
+                            <com.google.android.material.chip.Chip
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Social"
+                                android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp"/>
+
+                            <com.google.android.material.chip.Chip
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Creativo"
+                                android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp"/>
+
+                            <com.google.android.material.chip.Chip
+                                style="@style/Widget.MaterialComponents.Chip.Choice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Descanso"
+                                android:fontFamily="@font/dm_sans_medium"
+                                android:textSize="13sp"/>
+
+                        </com.google.android.material.chip.ChipGroup>
+                    </HorizontalScrollView>
 
                     <!-- Creamos un label para la sección de categoría -->
                     <TextView

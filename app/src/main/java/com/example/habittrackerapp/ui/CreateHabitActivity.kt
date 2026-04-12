@@ -1,5 +1,7 @@
 package com.example.habittrackerapp.ui
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.widget.ArrayAdapter
 import androidx.lifecycle.lifecycleScope
 import com.example.habittrackerapp.data.CategoryRepository
@@ -10,16 +12,18 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.habittrackerapp.R
 import com.example.habittrackerapp.databinding.ActivityCreateHabitBinding
+import com.google.android.material.button.MaterialButton
 
-class CreateHabitActivity : AppCompatActivity() {    // Declaramos el fragmento de creación de hábitos
-    // Declaramos las variables de estado
+class CreateHabitActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityCreateHabitBinding
     private lateinit var formManager: HabitFormManager
-    // Declaramos los repositorios de hábitos y categorías
+
     private val habitRepository    = HabitRepository()
     private val categoryRepository = CategoryRepository()
     private var categorias         = listOf<HabitCategory>()
     private var categoriaSeleccionada: HabitCategory? = null
+    private var diasGraciaSeleccionados = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,19 +46,46 @@ class CreateHabitActivity : AppCompatActivity() {    // Declaramos el fragmento 
             layoutDays    = binding.layoutDays,
             tvDaysError   = binding.tvDaysError
         )
-        // Configuramos el modo de frecuencia inicial
+
         formManager.inicializarFrecuencia(diario = true)
+        formManager.configurarSelectorTipo(binding.chipGroupTipo)
+        seleccionarGracia(0)
         cargarCategorias()
-        // Configuramos el botón de guardado
+
+        binding.btnGrace0.setOnClickListener { seleccionarGracia(0) }
+        binding.btnGrace1.setOnClickListener { seleccionarGracia(1) }
+        binding.btnGrace2.setOnClickListener { seleccionarGracia(2) }
+
         binding.btnSave.setOnClickListener {
             if (validarFormulario()) guardarHabito()
         }
-        // Configuramos el botón de retroceso
+
         binding.edtHabitName.setOnFocusChangeListener { _, _ ->
             binding.tilHabitName.error = null
         }
     }
-    // Cargamos las categorías desde Firestore
+
+    private fun seleccionarGracia(dias: Int) {
+        diasGraciaSeleccionados = dias
+        listOf(binding.btnGrace0, binding.btnGrace1, binding.btnGrace2)
+            .forEachIndexed { index, btn ->
+                if (index == dias) aplicarEstiloGraciaActivo(btn)
+                else               aplicarEstiloGraciaInactivo(btn)
+            }
+    }
+
+    private fun aplicarEstiloGraciaActivo(boton: MaterialButton) {
+        boton.backgroundTintList = ColorStateList.valueOf(getColor(R.color.accent))
+        boton.strokeColor        = ColorStateList.valueOf(getColor(R.color.accent))
+        boton.setTextColor(getColor(R.color.on_accent))
+    }
+
+    private fun aplicarEstiloGraciaInactivo(boton: MaterialButton) {
+        boton.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
+        boton.strokeColor        = ColorStateList.valueOf(getColor(R.color.divider_color))
+        boton.setTextColor(getColor(R.color.text_secondary))
+    }
+
     private fun cargarCategorias() {
         lifecycleScope.launch {
             val resultado = categoryRepository.obtenerCategorias()
@@ -75,7 +106,7 @@ class CreateHabitActivity : AppCompatActivity() {    // Declaramos el fragmento 
             )
         }
     }
-    // Validamos el formulario
+
     private fun validarFormulario(): Boolean {
         val nombre   = binding.edtHabitName.text.toString().trim()
         var esValido = true
@@ -94,7 +125,7 @@ class CreateHabitActivity : AppCompatActivity() {    // Declaramos el fragmento 
 
         return esValido
     }
-    // Guardamos el hábito
+
     private fun guardarHabito() {
         val nombre = binding.edtHabitName.text.toString().trim()
 
@@ -106,7 +137,9 @@ class CreateHabitActivity : AppCompatActivity() {    // Declaramos el fragmento 
                 nombre      = nombre,
                 frecuencia  = formManager.obtenerFrecuenciaString(),
                 diasSemana  = formManager.obtenerDiasLista(),
-                categoriaId = categoriaSeleccionada?.id ?: ""
+                categoriaId = categoriaSeleccionada?.id ?: "",
+                diasGracia  = diasGraciaSeleccionados,
+                tipoCognitivo = formManager.obtenerTipoSeleccionado()
             )
             resultado.fold(
                 onSuccess = { finish() },
