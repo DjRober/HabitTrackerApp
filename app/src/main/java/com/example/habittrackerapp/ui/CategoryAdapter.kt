@@ -36,6 +36,8 @@ class CategoryAdapter(    // Creamos el adaptador para las categorías
             }
             ivCategoryIcon.backgroundTintList =
                 android.content.res.ColorStateList.valueOf(colorInt)
+            ivCategoryIcon.backgroundTintList =
+                android.content.res.ColorStateList.valueOf(colorInt)
             ivCategoryIcon.setImageResource(
                 com.example.habittrackerapp.R.drawable.ic_leaf
             )

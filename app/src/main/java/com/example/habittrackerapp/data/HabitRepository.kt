@@ -41,28 +41,34 @@ class HabitRepository {    // Declaramos el repositorio para los hábitos
     (la fecha de ultimaCompletacion es anterior), la racha se rompió */
     private fun debeResetearRacha(
         diasSemana: List<String>,
-        ultimaCompletacion: com.google.firebase.Timestamp?
+        ultimaCompletacion: com.google.firebase.Timestamp?,
+        diasGracia: Int = 0
     ): Boolean {
         if (diasSemana.isEmpty()) return false
 
         val formato = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val fechaUltimaStr = if (ultimaCompletacion != null)
+            formato.format(ultimaCompletacion.toDate()) else ""
 
-        for (i in 1..7) {
+        var diasMissed = 0
+        // Buscamos el último día programado antes de hoy
+        val cal = Calendar.getInstance()
+        for (i in 1..14) {
             val cal = Calendar.getInstance()
             cal.add(Calendar.DAY_OF_YEAR, -i)
             val etiqueta = mapaCalendario[cal.get(Calendar.DAY_OF_WEEK)] ?: continue
 
-            if (diasSemana.contains(etiqueta)) {
-                // Encontramos el último día en que debía cumplirse el hábito
-                val fechaEsperadaStr = formato.format(cal.time)
+            if (!diasSemana.contains(etiqueta)) continue
 
-                if (ultimaCompletacion == null) return true
+            val fechaDia = formato.format(cal.time)
+            // Si no tiene completación, la racha se rompió
+            if (fechaDia <= fechaUltimaStr) break
 
-                val fechaUltimaStr = formato.format(ultimaCompletacion.toDate())
-                // Si la última completación es anterior al último día esperado, la racha se rompió
-                return fechaUltimaStr < fechaEsperadaStr
-            }
+            diasMissed++
+
+            if (diasMissed > diasGracia) return true
         }
+
         return false
     }
     // Recalculamos el porcentaje de cumplimiento real sobre los últimos 30 días
@@ -100,20 +106,25 @@ class HabitRepository {    // Declaramos el repositorio para los hábitos
         nombre: String,
         frecuencia: String,
         diasSemana: List<String>,
-        categoriaId: String = ""
+        categoriaId: String = "",
+        diasGracia: Int = 0,
+        tipoCognitivo: String = TipoCognitivo.FISICO
     ): Result<String> {
         return try {
             val uid  = obtenerUid()
             val dato = mapOf(
-                "uid"                to uid,
-                "nombre"             to nombre,
-                "frecuencia"         to frecuencia,
-                "diasSemana"         to diasSemana,
-                "categoriaId"        to categoriaId,
-                "racha"              to 0,
-                "porcentaje"         to 0,
+                "uid"                 to uid,
+                "nombre"              to nombre,
+                "frecuencia"          to frecuencia,
+                "diasSemana"          to diasSemana,
+                "categoriaId"         to categoriaId,
+                "diasGracia"          to diasGracia,
+                "tipoCognitivo"       to tipoCognitivo,
+                "racha"               to 0,
+                "porcentaje"          to 0,
                 "totalCompletaciones" to 0,
-                "fechaCreacion"      to com.google.firebase.Timestamp.now()
+                "archivado"           to false,
+                "fechaCreacion"       to com.google.firebase.Timestamp.now()
             )
             val referencia = coleccionHabitos().add(dato).await()
             Result.success(referencia.id)
@@ -129,6 +140,7 @@ class HabitRepository {    // Declaramos el repositorio para los hábitos
             val uid      = obtenerUid()
             val snapshot = coleccionHabitos()
                 .whereEqualTo("uid", uid)
+                .whereEqualTo("archivado", false)
                 .get()
                 .await()
 
@@ -153,8 +165,9 @@ class HabitRepository {    // Declaramos el repositorio para los hábitos
                     val diasSemana = (doc.get("diasSemana") as? List<*>)
                         ?.filterIsInstance<String>() ?: emptyList()
                     val ultimaCompletacion = doc.getTimestamp("ultimaCompletacion")
+                    val diasGraciaDoc = (doc.getLong("diasGracia") ?: 0L).toInt()
 
-                    if (debeResetearRacha(diasSemana, ultimaCompletacion)) {
+                    if (debeResetearRacha(diasSemana, ultimaCompletacion, diasGraciaDoc)) {
                         batch.update(
                             coleccionHabitos().document(doc.id),
                             mapOf("racha" to 0)
@@ -186,6 +199,9 @@ class HabitRepository {    // Declaramos el repositorio para los hábitos
                     racha               = (doc.getLong("racha")       ?: 0L).toInt(),
                     porcentaje          = (doc.getLong("porcentaje")  ?: 0L).toInt(),
                     totalCompletaciones = (doc.getLong("totalCompletaciones") ?: 0L).toInt(),
+                    diasGracia          = (doc.getLong("diasGracia")  ?: 0L).toInt(),
+                    archivado           = doc.getBoolean("archivado") ?: false,
+                    tipoCognitivo       = doc.getString("tipoCognitivo") ?: TipoCognitivo.FISICO,
                     uid                 = doc.getString("uid")         ?: "",
                     categoriaId         = categoriaId,
                     categoriaNombre     = categoriaNombre,
@@ -369,6 +385,8 @@ class HabitRepository {    // Declaramos el repositorio para los hábitos
                 racha               = (doc.getLong("racha")               ?: 0L).toInt(),
                 porcentaje          = (doc.getLong("porcentaje")          ?: 0L).toInt(),
                 totalCompletaciones = (doc.getLong("totalCompletaciones") ?: 0L).toInt(),
+                diasGracia          = (doc.getLong("diasGracia")          ?: 0L).toInt(),
+                tipoCognitivo       = doc.getString("tipoCognitivo") ?: TipoCognitivo.FISICO,
                 uid                 = doc.getString("uid")         ?: "",
                 categoriaId         = doc.getString("categoriaId") ?: ""
             )
@@ -383,17 +401,21 @@ class HabitRepository {    // Declaramos el repositorio para los hábitos
         nombre: String,
         frecuencia: String,
         diasSemana: List<String>,
-        categoriaId: String
+        categoriaId: String,
+        diasGracia: Int = 0,
+        tipoCognitivo: String = TipoCognitivo.FISICO
     ): Result<Unit> {
         return try {
             coleccionHabitos()
                 .document(habitoId)
                 .update(
                     mapOf(
-                        "nombre"      to nombre,
-                        "frecuencia"  to frecuencia,
-                        "diasSemana"  to diasSemana,
-                        "categoriaId" to categoriaId
+                        "nombre"        to nombre,
+                        "frecuencia"    to frecuencia,
+                        "diasSemana"    to diasSemana,
+                        "categoriaId"   to categoriaId,
+                        "diasGracia"    to diasGracia,
+                        "tipoCognitivo" to tipoCognitivo
                     )
                 ).await()
             Result.success(Unit)
@@ -432,6 +454,349 @@ class HabitRepository {    // Declaramos el repositorio para los hábitos
                     totalCompletaciones = totalCompletaciones
                 )
             )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    // Obtenemos el estado de cada día del mes indicado para el calendario
+    suspend fun obtenerHistorialMes(
+        habitoId: String,
+        año: Int,
+        mes: Int
+    ): Result<Map<String, DayState>> {
+        return try {
+            val formato = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val hoyStr  = obtenerFechaHoy()
+
+            val completaciones = coleccionHabitos()
+                .document(habitoId)
+                .collection("completaciones")
+                .get()
+                .await()
+
+            val fechasCompletadas = completaciones.documents.map { it.id }.toSet()
+
+            val habitoDoc = coleccionHabitos().document(habitoId).get().await()
+            val diasSemana = (habitoDoc.get("diasSemana") as? List<*>)
+                ?.filterIsInstance<String>() ?: emptyList()
+
+            val resultado = mutableMapOf<String, DayState>()
+
+            val cal = Calendar.getInstance()
+            cal.set(año, mes - 1, 1)
+            val diasEnMes = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+            for (dia in 1..diasEnMes) {
+                cal.set(año, mes - 1, dia)
+                val fechaStr = formato.format(cal.time)
+                val etiqueta = mapaCalendario[cal.get(Calendar.DAY_OF_WEEK)]
+
+                val estado = when {
+                    fechasCompletadas.contains(fechaStr) -> DayState.COMPLETED
+                    fechaStr == hoyStr                   -> DayState.TODAY
+                    fechaStr > hoyStr                    -> DayState.NOT_APPLICABLE
+                    !diasSemana.contains(etiqueta)       -> DayState.NOT_APPLICABLE
+                    else                                 -> DayState.MISSED
+                }
+                resultado[fechaStr] = estado
+            }
+
+            Result.success(resultado)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    // Archivamos un hábito -> no se elimina, solo lo oculta de la lista activa
+    suspend fun archivarHabito(habitoId: String): Result<Unit> {
+        return try {
+            coleccionHabitos()
+                .document(habitoId)
+                .update(mapOf("archivado" to true))
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    // Restauramos un hábito archivado a la lista activa
+    suspend fun restaurarHabito(habitoId: String): Result<Unit> {
+        return try {
+            coleccionHabitos()
+                .document(habitoId)
+                .update(mapOf("archivado" to false))
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    // Obtienemos los hábitos archivados del usuario
+    suspend fun obtenerHabitosArchivados(): Result<List<Habit>> {
+        return try {
+            val uid      = obtenerUid()
+            val snapshot = coleccionHabitos()
+                .whereEqualTo("uid", uid)
+                .whereEqualTo("archivado", true)
+                .get()
+                .await()
+
+            val snapshotCategorias = firestore.collection("categorias")
+                .whereEqualTo("uid", uid)
+                .get()
+                .await()
+
+            val mapaCategorias = snapshotCategorias.documents.associate { doc ->
+                doc.id to Pair(
+                    doc.getString("nombre") ?: "",
+                    doc.getString("color")  ?: "#C8614A"
+                )
+            }
+
+            val habitos = snapshot.documents.mapNotNull { doc ->
+                val categoriaId = doc.getString("categoriaId") ?: ""
+                val (categoriaNombre, categoriaColor) = mapaCategorias[categoriaId]
+                    ?: Pair("", "#C8614A")
+
+                Habit(
+                    id                  = doc.id,
+                    nombre              = doc.getString("nombre")     ?: "",
+                    frecuencia          = doc.getString("frecuencia") ?: "",
+                    diasSemana          = (doc.get("diasSemana") as? List<*>)
+                                             ?.filterIsInstance<String>() ?: emptyList(),
+                    racha               = (doc.getLong("racha")               ?: 0L).toInt(),
+                    porcentaje          = (doc.getLong("porcentaje")          ?: 0L).toInt(),
+                    totalCompletaciones = (doc.getLong("totalCompletaciones") ?: 0L).toInt(),
+                    archivado           = true,
+                    tipoCognitivo       = doc.getString("tipoCognitivo") ?: TipoCognitivo.FISICO,
+                    uid                 = doc.getString("uid")         ?: "",
+                    categoriaId         = categoriaId,
+                    categoriaNombre     = categoriaNombre,
+                    categoriaColor      = categoriaColor
+                )
+            }
+
+            Result.success(habitos.sortedByDescending { habit ->
+                snapshot.documents.find { it.id == habit.id }
+                    ?.getTimestamp("fechaCreacion")?.seconds ?: 0L
+            })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    // Calculamos el % de cumplimiento de la semana actual -> lunes a hoy
+    suspend fun obtenerPorcentajeSemana(): Result<Int> {
+        return try {
+            val uid     = obtenerUid()
+            val formato = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+            val calLunes = Calendar.getInstance()
+            val diasDesdeElLunes =
+                (calLunes.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7
+            calLunes.add(Calendar.DAY_OF_YEAR, -diasDesdeElLunes)
+            val inicioSemana = formato.format(calLunes.time)
+            val finSemana    = obtenerFechaHoy()
+
+            val snapshot = coleccionHabitos()
+                .whereEqualTo("uid", uid)
+                .whereEqualTo("archivado", false)
+                .get()
+                .await()
+
+            var totalProgramadas = 0
+            var totalCompletadas = 0
+
+            for (doc in snapshot.documents) {
+                val diasSemana = (doc.get("diasSemana") as? List<*>)
+                    ?.filterIsInstance<String>() ?: emptyList()
+
+                val calTemp = calLunes.clone() as Calendar
+                while (formato.format(calTemp.time) <= finSemana) {
+                    val etiqueta = mapaCalendario[calTemp.get(Calendar.DAY_OF_WEEK)]
+                    if (etiqueta != null && diasSemana.contains(etiqueta)) {
+                        totalProgramadas++
+                    }
+                    calTemp.add(Calendar.DAY_OF_YEAR, 1)
+                }
+
+                val completaciones = coleccionHabitos()
+                    .document(doc.id)
+                    .collection("completaciones")
+                    .get()
+                    .await()
+
+                totalCompletadas += completaciones.documents.count { d ->
+                    val fecha = d.getString("fecha") ?: d.id
+                    fecha >= inicioSemana && fecha <= finSemana
+                }
+            }
+
+            Result.success(
+                if (totalProgramadas > 0)
+                    (totalCompletadas * 100) / totalProgramadas
+                else 0
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    // Calculamos el resumen completo de la semana para WeeklySummaryActivity y el Worker.
+    suspend fun obtenerResumenSemanal(): Result<ResumenSemanal> {
+        return try {
+            val uid     = obtenerUid()
+            val formato = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+            val calLunes = Calendar.getInstance()
+            val diasDesdeElLunes =
+                (calLunes.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7
+            calLunes.add(Calendar.DAY_OF_YEAR, -diasDesdeElLunes)
+            val inicioSemana = formato.format(calLunes.time)
+            val finSemana    = obtenerFechaHoy()
+
+            val snapshot = coleccionHabitos()
+                .whereEqualTo("uid", uid)
+                .whereEqualTo("archivado", false)
+                .get()
+                .await()
+
+            var totalProgramadas    = 0
+            var totalCompletadas    = 0
+            var rachaMaxima         = 0
+            var habitoMejorRacha    = ""
+            var peorPorcentaje      = 101
+            var habitoMasDescuidado : String? = null
+
+            for (doc in snapshot.documents) {
+                val nombre     = doc.getString("nombre") ?: ""
+                val diasSemana = (doc.get("diasSemana") as? List<*>)
+                    ?.filterIsInstance<String>() ?: emptyList()
+                val racha      = (doc.getLong("racha") ?: 0L).toInt()
+
+                if (racha > rachaMaxima) {
+                    rachaMaxima      = racha
+                    habitoMejorRacha = nombre
+                }
+
+                val calTemp = calLunes.clone() as Calendar
+                var programadasEsteHabito = 0
+                while (formato.format(calTemp.time) <= finSemana) {
+                    val etiqueta = mapaCalendario[calTemp.get(Calendar.DAY_OF_WEEK)]
+                    if (etiqueta != null && diasSemana.contains(etiqueta)) {
+                        programadasEsteHabito++
+                    }
+                    calTemp.add(Calendar.DAY_OF_YEAR, 1)
+                }
+
+                if (programadasEsteHabito > 0) {
+                    totalProgramadas += programadasEsteHabito
+
+                    val completaciones = coleccionHabitos()
+                        .document(doc.id)
+                        .collection("completaciones")
+                        .get()
+                        .await()
+
+                    val completadasEsteHabito = completaciones.documents.count { d ->
+                        val fecha = d.getString("fecha") ?: d.id
+                        fecha >= inicioSemana && fecha <= finSemana
+                    }
+                    totalCompletadas += completadasEsteHabito
+
+                    val pct = (completadasEsteHabito * 100) / programadasEsteHabito
+                    if (pct < peorPorcentaje) {
+                        peorPorcentaje      = pct
+                        habitoMasDescuidado = if (pct < 50) nombre else null
+                    }
+                }
+            }
+
+            val porcentajeSemana =
+                if (totalProgramadas > 0)
+                    (totalCompletadas * 100) / totalProgramadas
+                else 0
+
+            Result.success(
+                ResumenSemanal(
+                    porcentajeSemana       = porcentajeSemana,
+                    totalHabitos           = snapshot.size(),
+                    completacionesSemana   = totalCompletadas,
+                    totalProgramadasSemana = totalProgramadas,
+                    habitoMejorRacha       = habitoMejorRacha,
+                    rachaMaxima            = rachaMaxima,
+                    habitoMasDescuidado    = habitoMasDescuidado
+                )
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Retorna un mapa tipo -> cantidad de hábitos activos de ese tipo
+    suspend fun obtenerBalanceCognitivo(): Result<Map<String, Int>> {
+        return try {
+            val uid = obtenerUid()
+            val snapshot = coleccionHabitos()
+                .whereEqualTo("uid", uid)
+                .whereEqualTo("archivado", false)
+                .get()
+                .await()
+
+            val balance = mutableMapOf<String, Int>()
+            TipoCognitivo.todos.forEach { balance[it] = 0 }
+
+            snapshot.documents.forEach { doc ->
+                val tipo = doc.getString("tipoCognitivo") ?: TipoCognitivo.FISICO
+                balance[tipo] = (balance[tipo] ?: 0) + 1
+            }
+
+            Result.success(balance)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Guarda o actualiza la reflexión del día para un hábito
+    suspend fun guardarReflexion(
+        habitoId: String,
+        texto: String
+    ): Result<Unit> {
+        return try {
+            val fecha = obtenerFechaHoy()
+            coleccionHabitos()
+                .document(habitoId)
+                .collection("reflexiones")
+                .document(fecha)
+                .set(mapOf(
+                    "fecha"     to fecha,
+                    "texto"     to texto,
+                    "timestamp" to com.google.firebase.Timestamp.now()
+                ))
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // Obtiene las últimas 5 reflexiones de un hábito, ordenadas por fecha desc
+    suspend fun obtenerReflexiones(habitoId: String): Result<List<Reflexion>> {
+        return try {
+            val snapshot = coleccionHabitos()
+                .document(habitoId)
+                .collection("reflexiones")
+                .orderBy("timestamp",
+                    com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .limit(5)
+                .get()
+                .await()
+
+            val reflexiones = snapshot.documents.mapNotNull { doc ->
+                Reflexion(
+                    fecha     = doc.getString("fecha") ?: "",
+                    texto     = doc.getString("texto") ?: "",
+                    timestamp = doc.getTimestamp("timestamp")?.seconds ?: 0L
+                )
+            }
+            Result.success(reflexiones)
         } catch (e: Exception) {
             Result.failure(e)
         }

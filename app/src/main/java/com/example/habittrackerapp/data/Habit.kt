@@ -1,6 +1,7 @@
 package com.example.habittrackerapp.data
 
-data class Habit(    // Declaramos el modelo de datos para los hábitos
+// Declaramos el modelo de datos para los hábitos
+data class Habit(
     val id: String = "",
     val nombre: String = "",
     val frecuencia: String = "",
@@ -8,6 +9,9 @@ data class Habit(    // Declaramos el modelo de datos para los hábitos
     val racha: Int = 0,
     val porcentaje: Int = 0,
     val totalCompletaciones: Int = 0,
+    val diasGracia: Int = 0,
+    val archivado: Boolean = false,
+    val tipoCognitivo: String = "Físico",
     val uid: String = "",
     val categoriaId: String = "",
     val categoriaNombre: String = "",

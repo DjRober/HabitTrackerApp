@@ -1,5 +1,7 @@
 package com.example.habittrackerapp.ui
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
@@ -9,25 +11,29 @@ import com.example.habittrackerapp.data.CategoryRepository
 import com.example.habittrackerapp.data.HabitCategory
 import com.example.habittrackerapp.data.HabitRepository
 import com.example.habittrackerapp.databinding.ActivityEditHabitBinding
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 
-class EditHabitActivity : AppCompatActivity() {    // Declaramos el fragmento de edición de hábitos
-    // Declaramos las variables de estado
+class EditHabitActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityEditHabitBinding
     private lateinit var formManager: HabitFormManager
-    // Declaramos los repositorios de hábitos y categorías
+
     private val habitRepository    = HabitRepository()
     private val categoryRepository = CategoryRepository()
-    // Declaramos las variables de estado
-    private var habitoId              = ""
-    private var categorias            = listOf<HabitCategory>()
-    private var categoriaSeleccionada: HabitCategory? = null
-    // Declaramos las constantes de Intent
+
+    private var habitoId                = ""
+    private var categorias              = listOf<HabitCategory>()
+    private var categoriaSeleccionada   : HabitCategory? = null
+    private var diasGraciaSeleccionados = 0
+
     companion object {
         const val EXTRA_HABIT_ID          = "habit_id"
         const val EXTRA_HABIT_NAME        = "habit_name"
         const val EXTRA_HABIT_FREQUENCY   = "habit_frequency"
         const val EXTRA_HABIT_CATEGORY_ID = "habit_category_id"
+        const val EXTRA_HABIT_GRACE_DAYS  = "habit_grace_days"
+        const val EXTRA_HABIT_TIPO_COGNITIVO = "habit_tipo_cognitivo"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +41,11 @@ class EditHabitActivity : AppCompatActivity() {    // Declaramos el fragmento de
         binding = ActivityEditHabitBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        habitoId = intent.getStringExtra(EXTRA_HABIT_ID)      ?: ""
-        val nombreActual      = intent.getStringExtra(EXTRA_HABIT_NAME)        ?: ""
-        val frecuenciaActual  = intent.getStringExtra(EXTRA_HABIT_FREQUENCY)   ?: ""
-        val categoriaIdActual = intent.getStringExtra(EXTRA_HABIT_CATEGORY_ID) ?: ""
+        habitoId                = intent.getStringExtra(EXTRA_HABIT_ID)          ?: ""
+        val nombreActual        = intent.getStringExtra(EXTRA_HABIT_NAME)        ?: ""
+        val frecuenciaActual    = intent.getStringExtra(EXTRA_HABIT_FREQUENCY)   ?: ""
+        val categoriaIdActual   = intent.getStringExtra(EXTRA_HABIT_CATEGORY_ID) ?: ""
+        diasGraciaSeleccionados = intent.getIntExtra(EXTRA_HABIT_GRACE_DAYS, 0)
 
         binding.edtHabitName.setText(nombreActual)
 
@@ -58,7 +65,7 @@ class EditHabitActivity : AppCompatActivity() {    // Declaramos el fragmento de
             layoutDays    = binding.layoutDays,
             tvDaysError   = binding.tvDaysError
         )
-        // Configuramos el modo de frecuencia inicial
+
         val esDiarioActual = frecuenciaActual == getString(R.string.frequency_daily)
         formManager.inicializarFrecuencia(esDiarioActual)
 
@@ -66,19 +73,48 @@ class EditHabitActivity : AppCompatActivity() {    // Declaramos el fragmento de
             formManager.preseleccionarDias(frecuenciaActual.split(" - "))
         }
 
-        cargarCategorias(categoriaIdActual)    // Cargamos las categorías desde Firestore
-        // Configuramos el botón de guardado
+        val tipoInicial = intent.getStringExtra(EXTRA_HABIT_TIPO_COGNITIVO) ?: com.example.habittrackerapp.data.TipoCognitivo.FISICO
+        formManager.configurarSelectorTipo(binding.chipGroupTipo, tipoInicial)
+
+        seleccionarGracia(diasGraciaSeleccionados)
+        cargarCategorias(categoriaIdActual)
+
+        binding.btnGrace0.setOnClickListener { seleccionarGracia(0) }
+        binding.btnGrace1.setOnClickListener { seleccionarGracia(1) }
+        binding.btnGrace2.setOnClickListener { seleccionarGracia(2) }
+
         binding.btnSave.setOnClickListener {
             if (validarFormulario()) guardarCambios()
         }
-        // Configuramos el botón para editar el nombre de hábito
+
         binding.edtHabitName.setOnFocusChangeListener { _, _ ->
             binding.tilHabitName.error = null
         }
-        // Configuramos el botón de retroceso
+
         binding.btnBack.setOnClickListener { finish() }
     }
-    // Cargamos las categorías desde Firestore
+
+    private fun seleccionarGracia(dias: Int) {
+        diasGraciaSeleccionados = dias
+        listOf(binding.btnGrace0, binding.btnGrace1, binding.btnGrace2)
+            .forEachIndexed { index, btn ->
+                if (index == dias) aplicarEstiloGraciaActivo(btn)
+                else               aplicarEstiloGraciaInactivo(btn)
+            }
+    }
+
+    private fun aplicarEstiloGraciaActivo(boton: MaterialButton) {
+        boton.backgroundTintList = ColorStateList.valueOf(getColor(R.color.accent))
+        boton.strokeColor        = ColorStateList.valueOf(getColor(R.color.accent))
+        boton.setTextColor(getColor(R.color.on_accent))
+    }
+
+    private fun aplicarEstiloGraciaInactivo(boton: MaterialButton) {
+        boton.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
+        boton.strokeColor        = ColorStateList.valueOf(getColor(R.color.divider_color))
+        boton.setTextColor(getColor(R.color.text_secondary))
+    }
+
     private fun cargarCategorias(categoriaIdActual: String) {
         lifecycleScope.launch {
             val resultado = categoryRepository.obtenerCategorias()
@@ -106,7 +142,7 @@ class EditHabitActivity : AppCompatActivity() {    // Declaramos el fragmento de
             )
         }
     }
-    // Validamos el formulario
+
     private fun validarFormulario(): Boolean {
         val nombre   = binding.edtHabitName.text.toString().trim()
         var esValido = true
@@ -125,7 +161,7 @@ class EditHabitActivity : AppCompatActivity() {    // Declaramos el fragmento de
 
         return esValido
     }
-    // Guardamos los cambios
+
     private fun guardarCambios() {
         val nombre = binding.edtHabitName.text.toString().trim()
 
@@ -138,7 +174,9 @@ class EditHabitActivity : AppCompatActivity() {    // Declaramos el fragmento de
                 nombre      = nombre,
                 frecuencia  = formManager.obtenerFrecuenciaString(),
                 diasSemana  = formManager.obtenerDiasLista(),
-                categoriaId = categoriaSeleccionada?.id ?: ""
+                categoriaId = categoriaSeleccionada?.id ?: "",
+                diasGracia  = diasGraciaSeleccionados,
+                tipoCognitivo = formManager.obtenerTipoSeleccionado()
             )
             resultado.fold(
                 onSuccess = { finish() },

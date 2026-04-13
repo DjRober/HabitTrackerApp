@@ -91,8 +91,20 @@
                 android:fontFamily="@font/dm_sans_medium"
                 android:textSize="12sp"
                 android:textColor="@color/accent"
-                android:layout_marginBottom="24dp"
                 tools:text="Todos los días"/>
+
+            <TextView
+                android:id="@+id/tvTipoCognitivo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="24dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_chip_tipo"
+                android:fontFamily="@font/dm_sans_medium"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"/>
 
             <!-- Creamos la racha y cumplimiento (card) -->
             <androidx.cardview.widget.CardView
@@ -219,8 +231,117 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Creamos el historial de los últimos 7 días ()card -->
+            <!-- Calendario mensual de progreso -->
             <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/card_background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <!-- Navegación de mes -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:id="@+id/btnMesAnterior"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_arrow_back"
+                            android:padding="6dp"
+                            app:tint="@color/text_secondary"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="Mes anterior"/>
+
+                        <TextView
+                            android:id="@+id/tvMesAnio"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:fontFamily="@font/playfair_display_semibold"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary"/>
+
+                        <ImageView
+                            android:id="@+id/btnMesSiguiente"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_arrow_back"
+                            android:rotation="180"
+                            android:padding="6dp"
+                            app:tint="@color/text_secondary"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="Mes siguiente"/>
+                    </LinearLayout>
+
+                    <!-- Encabezados días de la semana -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="7"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="L" android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="11sp" android:textColor="@color/text_secondary"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="M" android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="11sp" android:textColor="@color/text_secondary"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="X" android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="11sp" android:textColor="@color/text_secondary"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="J" android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="11sp" android:textColor="@color/text_secondary"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="V" android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="11sp" android:textColor="@color/text_secondary"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="S" android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="11sp" android:textColor="@color/text_secondary"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="D" android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="11sp" android:textColor="@color/text_secondary"/>
+                    </LinearLayout>
+
+                    <!-- Grid del calendario -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvCalendario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never"
+                        android:nestedScrollingEnabled="false"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Diario de reflexión -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardDiario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -237,20 +358,76 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/detail_label_week"
-                        android:fontFamily="@font/dm_sans_medium"
-                        android:textSize="12sp"
-                        android:textAllCaps="true"
-                        android:letterSpacing="0.08"
-                        android:textColor="@color/text_secondary"
-                        android:layout_marginBottom="16dp"/>
+                        android:text="Reflexión de hoy"
+                        android:fontFamily="@font/playfair_display_semibold"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="12dp"/>
 
-                    <!-- Creamos la sección de 'recyclerView' horizontal de días -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvWeekDays"
+                    <EditText
+                        android:id="@+id/etReflexion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:overScrollMode="never"/>
+                        android:minHeight="80dp"
+                        android:gravity="top"
+                        android:hint="¿Cómo te fue hoy con este hábito?"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:maxLength="280"
+                        android:background="@drawable/bg_input_reflexion"
+                        android:padding="12dp"
+                        android:fontFamily="@font/dm_sans"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_hint"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            android:id="@+id/tvContadorChars"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0 / 280"
+                            android:fontFamily="@font/dm_sans"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_hint"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGuardarReflexion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:text="Guardar"
+                            android:fontFamily="@font/dm_sans_medium"
+                            android:textSize="13sp"
+                            android:textColor="@color/on_accent"
+                            app:backgroundTint="@color/accent"
+                            app:cornerRadius="10dp"
+                            app:elevation="0dp"/>
+
+                    </LinearLayout>
+
+                    <!-- Historial de reflexiones -->
+                    <TextView
+                        android:id="@+id/tvHistorialLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Últimas reflexiones"
+                        android:fontFamily="@font/dm_sans_medium"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="gone"/>
+
+                    <LinearLayout
+                        android:id="@+id/llHistorialReflexiones"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

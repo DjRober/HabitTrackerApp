@@ -22,6 +22,32 @@ class HabitFormManager(
     // Mapeamos los chips a su estado actual
     private val estadoChips: MutableMap<TextView, Boolean> = mutableMapOf()
     private val etiquetaChips: Map<TextView, String>
+    
+    private var tipoSeleccionado: String = com.example.habittrackerapp.data.TipoCognitivo.FISICO
+
+    fun configurarSelectorTipo(
+        chipGroup: com.google.android.material.chip.ChipGroup,
+        tipoInicial: String = com.example.habittrackerapp.data.TipoCognitivo.FISICO
+    ) {
+        tipoSeleccionado = tipoInicial
+        // Seleccionar el chip correspondiente al tipo inicial
+        for (i in 0 until chipGroup.childCount) {
+            val chip = chipGroup.getChildAt(i) as? com.google.android.material.chip.Chip
+            if (chip?.text.toString() == "${com.example.habittrackerapp.data.TipoCognitivo.emoji(tipoInicial)} $tipoInicial") {
+                chip?.isChecked = true
+            }
+        }
+        chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+            val chip = group.findViewById<com.google.android.material.chip.Chip>(
+                checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
+            )
+            // Extrae solo el texto sin emoji: "🏃 Físico" -> "Físico"
+            tipoSeleccionado = chip?.text?.toString()?.substringAfter(" ") ?: com.example.habittrackerapp.data.TipoCognitivo.FISICO
+        }
+    }
+
+    fun obtenerTipoSeleccionado(): String = tipoSeleccionado
+
 
     init {    // Inicializamos el estado de los chips
         etiquetaChips = chipData.associate { (chip, etiqueta) -> chip to etiqueta }

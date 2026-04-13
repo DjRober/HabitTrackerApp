@@ -30,4 +30,7 @@
     <color name="terracota">#C8614A</color>
     <color name="terracota_light">#EDD5CE</color>
     <color name="verde_salvia">#7DAF8F</color>
+
+    <!-- Color semántico para mensajes de error en formularios -->
+    <color name="error_text">#B00020</color>
 </resources>

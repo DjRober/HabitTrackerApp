@@ -1,5 +1,6 @@
 package com.example.habittrackerapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +13,9 @@ import com.example.habittrackerapp.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class HomeFragment : Fragment() {    // Declaramos el fragmento HomeFragment
-    // Declaramos las variables de enlace de vista
+class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    // Declaramos el repositorio de hábitos
     private val habitRepository = HabitRepository()
 
     override fun onCreateView(
@@ -27,19 +26,27 @@ class HomeFragment : Fragment() {    // Declaramos el fragmento HomeFragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
-    // Configuramos el comportamiento de la interfaz de usuario
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configurarSaludo()
         configurarFecha()
         cargarEstadisticas()
+
+        binding.tvBtnResumenSemanal.setOnClickListener {
+            startActivity(Intent(requireContext(), WeeklySummaryActivity::class.java))
+        }
+
+        binding.fabFocus.setOnClickListener {
+            startActivity(Intent(requireContext(), FocusModeActivity::class.java))
+        }
     }
-    // Cargamos las estadísticas al volver a la pantalla
+
     override fun onResume() {
         super.onResume()
         cargarEstadisticas()
     }
-    // Configuramos el saludo según la hora del día
+
     private fun configurarSaludo() {
         val hora = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         binding.tvGreeting.text = when {
@@ -48,27 +55,26 @@ class HomeFragment : Fragment() {    // Declaramos el fragmento HomeFragment
             else      -> getString(R.string.home_greeting_evening)
         }
     }
-    // Configuramos la fecha actual
+
     private fun configurarFecha() {
-        val cal       = Calendar.getInstance()
-        val diasSemana = listOf(
-            "Domingo", "Lunes", "Martes", "Miércoles",
-            "Jueves", "Viernes", "Sábado"
-        )
-        val meses = listOf(
-            "enero", "febrero", "marzo", "abril", "mayo", "junio",
-            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-        )
+        val cal        = Calendar.getInstance()
+        val diasSemana = listOf("Domingo", "Lunes", "Martes", "Miércoles",
+            "Jueves", "Viernes", "Sábado")
+        val meses = listOf("enero", "febrero", "marzo", "abril", "mayo", "junio",
+            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
         val diaSemana = diasSemana[cal.get(Calendar.DAY_OF_WEEK) - 1]
         val dia       = cal.get(Calendar.DAY_OF_MONTH)
         val mes       = meses[cal.get(Calendar.MONTH)]
         binding.tvDate.text = "$diaSemana, $dia de $mes"
     }
-    // Cargamos las estadísticas del usuario
+
     private fun cargarEstadisticas() {
+        binding.tvMensajeMotivacional.text = getString(R.string.home_msg_loading)
+
         lifecycleScope.launch {
-            val resultado = habitRepository.obtenerEstadisticas()
-            resultado.fold(
+            // Carga estadísticas del resumen principal
+            val resultStats = habitRepository.obtenerEstadisticas()
+            resultStats.fold(
                 onSuccess = { stats ->
                     binding.tvStatActivos.text     = stats.totalHabitos.toString()
                     binding.tvStatCompletados.text = stats.completadosHoy.toString()
@@ -80,9 +86,103 @@ class HomeFragment : Fragment() {    // Declaramos el fragmento HomeFragment
                     binding.tvStatRacha.text       = "0"
                 }
             )
+
+            // Carga mensaje motivacional dinámico con datos semanales
+            val resultSemana = habitRepository.obtenerPorcentajeSemana()
+            resultStats.fold(
+                onSuccess = { stats ->
+                    val pct    = resultSemana.getOrElse { 0 }
+                    val racha  = stats.rachaMaxima
+
+                    binding.tvMensajeMotivacional.text = when {
+                        pct == 100       -> getString(R.string.home_msg_perfect)
+                        pct >= 80        -> getString(R.string.home_msg_great)
+                        pct >= 50        -> getString(R.string.home_msg_good)
+                        racha > 0        -> getString(R.string.home_msg_streak, racha)
+                        else             -> getString(R.string.home_msg_start)
+                    }
+                },
+                onFailure = {
+                    binding.tvMensajeMotivacional.text = getString(R.string.home_msg_start)
+                }
+            )
+
+            val balanceResult = habitRepository.obtenerBalanceCognitivo()
+            balanceResult.fold(
+                onSuccess = { balance -> mostrarBalanceCognitivo(balance) },
+                onFailure = { }
+            )
         }
     }
-    // Limpiamos el enlace de vista
+
+    private fun mostrarBalanceCognitivo(balance: Map<String, Int>) {
+        val llBarras = binding.llBalanceBars
+        llBarras.removeAllViews()
+
+        val total = balance.values.sum()
+        if (total == 0) {
+            binding.cardBalanceCognitivo.visibility = View.GONE
+            return
+        }
+        binding.cardBalanceCognitivo.visibility = View.VISIBLE
+
+        com.example.habittrackerapp.data.TipoCognitivo.todos.forEach { tipo ->
+            val cantidad = balance[tipo] ?: 0
+            if (cantidad == 0) return@forEach
+
+            val porcentaje = (cantidad * 100f / total).toInt()
+            val colorHex   = com.example.habittrackerapp.data.TipoCognitivo.color(tipo)
+            val emoji      = com.example.habittrackerapp.data.TipoCognitivo.emoji(tipo)
+
+            val fila = android.widget.LinearLayout(requireContext()).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply { bottomMargin = 10 }
+            }
+
+            val etiqueta = android.widget.TextView(requireContext()).apply {
+                text = "$emoji $tipo — $cantidad"
+                textSize = 12f
+                setTextColor(requireContext().getColor(R.color.text_secondary))
+                typeface = android.graphics.Typeface.create("dm_sans_medium", android.graphics.Typeface.NORMAL)
+            }
+
+            val barraContenedor = android.widget.FrameLayout(requireContext()).apply {
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT, 8
+                ).apply { topMargin = 4 }
+                background = requireContext().getDrawable(R.drawable.bg_progress_track)
+            }
+
+            val barraRelleno = android.view.View(requireContext()).apply {
+                layoutParams = android.widget.FrameLayout.LayoutParams(0, 8)
+                setBackgroundColor(android.graphics.Color.parseColor(colorHex))
+                background = android.graphics.drawable.GradientDrawable().apply {
+                    shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+                    setColor(android.graphics.Color.parseColor(colorHex))
+                    cornerRadius = 8f
+                }
+                viewTreeObserver.addOnGlobalLayoutListener(
+                    object : android.view.ViewTreeObserver.OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            val anchoTotal = barraContenedor.width
+                            layoutParams.width = (anchoTotal * porcentaje / 100f).toInt()
+                            requestLayout()
+                        }
+                    }
+                )
+            }
+
+            barraContenedor.addView(barraRelleno)
+            fila.addView(etiqueta)
+            fila.addView(barraContenedor)
+            llBarras.addView(fila)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

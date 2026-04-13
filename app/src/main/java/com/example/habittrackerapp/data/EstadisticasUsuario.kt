@@ -1,6 +1,6 @@
 package com.example.habittrackerapp.data
 
-// Declaramos el modelo de datos para las estadísticas del usuario
+// Creamos  'EstadisticasUsuario' como modelo de datos para las estadísticas del usuario
 data class EstadisticasUsuario(
     val totalHabitos: Int,
     val completadosHoy: Int,
